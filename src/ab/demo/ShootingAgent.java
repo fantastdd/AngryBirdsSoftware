@@ -8,14 +8,14 @@ import ab.demo.other.Shot;
 import ab.planner.TrajectoryPlanner;
 import ab.vision.Vision;
 
-public class ShootAgent {
+public class ShootingAgent {
     
 	
 	public static void shoot(String[] args, boolean cshoot)
 	{
 		ActionRobot ar = new ActionRobot();
 		TrajectoryPlanner tp = new TrajectoryPlanner();
-		ar.fullyZoomOut();
+		ActionRobot.fullyZoomOut();
 		Vision vision = new Vision(ActionRobot.doScreenShot());
 		Rectangle slingshot = vision.findSlingshotMBR();
 		while(slingshot == null)

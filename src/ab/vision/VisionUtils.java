@@ -32,8 +32,6 @@ import java.util.Queue;
 import javax.imageio.ImageIO;
 
 import Jama.Matrix;
-import ab.objtracking.RealTimeTracking;
-import ab.objtracking.Tracker;
 
 /* VisionUtils ------------------------------------------------------------ */
 
@@ -543,39 +541,7 @@ public class VisionUtils {
 
 		return meta;
 	}
-	public static BufferedImage constructImageSegWithTracking(BufferedImage screenshot, Tracker tracker) {
 
-		// process imaged
-		Vision vision = new Vision(screenshot);
-		ABList pigs = vision.findPigs();
-		ABList blocks = vision.findBlocks();
-		ABList allInterestObjs = ABList.newList();
-		allInterestObjs.addAll(pigs);
-		allInterestObjs.addAll(blocks);
-		if(RealTimeTracking.askForIniScenario)
-		{
-		
-			System.out.println(" Initial objects size: " + allInterestObjs.size());
-			RealTimeTracking.flipAskForInitialScenario();
-			tracker.startTracking(allInterestObjs);
-		}
-		else
-		{
-			if(tracker != null && tracker.isTrackingStart())
-			{
-				tracker.matchObjs(allInterestObjs);
-				tracker.setInitialObjects(allInterestObjs);
-				//System.out.println(" match completed");
-			}
-		}
-		// draw objects
-		screenshot = VisionUtils.convert2grey(screenshot);
-		VisionUtils.drawBoundingBoxesWithID(screenshot, pigs, Color.GREEN);
-		
-		VisionUtils.drawBoundingBoxesWithID(screenshot, blocks, boxesColor);
-	
-		return screenshot;
-	}
 	
 	 public static BufferedImage analyseScreenShot(BufferedImage screenshot) {
 
@@ -593,7 +559,7 @@ public class VisionUtils {
 
 		//System.out.println("In game score : " + game.getScoreInGame(screenshot));
 		// process image
-		Vision vision = new Vision(screenshot);
+		VisionMBR vision = new VisionMBR(screenshot);
 		List<Rectangle> pigs = vision.findPigsMBR();
 		List<Rectangle> redBirds = vision.findRedBirds();
 		List<Rectangle> blueBirds = vision.findBlueBirds();

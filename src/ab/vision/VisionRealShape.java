@@ -2,7 +2,7 @@
  * @author      Andrew Wang <u4853279@anu.edu.au>
  */
  
-package ab.vision.real;
+package ab.vision;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -11,21 +11,22 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-import ab.vision.ABObject;
-import ab.vision.ABType;
-import ab.vision.VisionUtils;
+import ab.demo.other.ActionRobot;
+import ab.vision.real.ConnectedComponent;
+import ab.vision.real.ImageSegmenter;
 import ab.vision.real.shape.Body;
 import ab.vision.real.shape.Circle;
 import ab.vision.real.shape.Rect;
 
-public class MyVision 
+public class VisionRealShape 
 {
     // offset constants for calculating reference point
     private static double X_OFFSET = 0.188;
     private static double Y_OFFSET = 0.156;
-    
+    private final static int unassigned = -1;
     // image segmenter 
     private ImageSegmenter _seg;
     
@@ -34,8 +35,8 @@ public class MyVision
     
     // detected game objects
     private Rectangle _sling = null;
-    private ArrayList<Circle> _birds = null;
-    private ArrayList<Body> _gameObjects = null;
+    private List<ABObject> _birds = null;
+    private ArrayList<ABObject> _gameObjects = null;
     
     // connected component and shapes for drawing purposes
     private ArrayList<ConnectedComponent> _draw = null;
@@ -51,7 +52,7 @@ public class MyVision
     // ground level
     private int _ground = 0;
     
-    public MyVision(BufferedImage screenshot)
+    public VisionRealShape(BufferedImage screenshot)
     {
         // initialise screen size
         _width = screenshot.getWidth();
@@ -68,10 +69,10 @@ public class MyVision
         // initialise drawing objects
         _draw = new ArrayList<ConnectedComponent>();
         _drawShape = new ArrayList<Body>();
-        
+        _gameObjects = new ArrayList<ABObject>();
         // find the slingshot and reference point
         findSling();
-        
+      
     }
     
     // find the slingshot
@@ -109,16 +110,15 @@ public class MyVision
     }
     
     // find all birds in the scene, listed from left to right
-    public ArrayList<Circle> findBirds()
+    public List<ABObject> findBirds()
     {
         if (_birds != null) return _birds;
         if (_sling == null) return null;
         
-        _birds = new ArrayList<Circle>();
+        _birds = new LinkedList<ABObject>();
         
         // scan the birds from left to right
         int xMax = -2;
-        ConnectedComponent prev = null;
         final int BIRD_DISTANCE = 150;
         for (ConnectedComponent c : _components)
         {
@@ -137,7 +137,6 @@ public class MyVision
                     _birds.add(b);
                     _draw.add(c);
                     _drawShape.add(b);
-                    prev = c;
                     xMax = bound[2];
                 }
             }
@@ -147,13 +146,13 @@ public class MyVision
     }
     
     // find all objects in the scene beside slingshot and birds
-    public List<Body> findObjects()
+    public List<ABObject> findObjects()
     {
         int xMin = 0;
         if (_sling != null)
             xMin = _sling.x + 100;
             
-        _gameObjects = new ArrayList<Body>();
+      
         for (ConnectedComponent c : _components)
         {
             if ((c.getType() >= ImageSegmenter.PIG && c.getType() <= ImageSegmenter.DUCK) || 
@@ -178,7 +177,7 @@ public class MyVision
     			
     				ABObject newBlock = new Rect(
     						b.getCenterX(), b.getCenterY(), b.getBounds().width, 
-    						b.getBounds().height, 0, -1, b.area);
+    						b.getBounds().height, 0, ABType.Unknown, b.area);
     				/*System.out.println(" circle to rec conversion: Circle " + b);
     				System.out.println(" circle to rec conversion: Rect " + newBlock);*/
     				newBlock.type = b.type;
@@ -188,7 +187,9 @@ public class MyVision
                 _gameObjects.add(_b);
                 _draw.add(c);
                 _drawShape.add(b);
+               
             }
+            
         }
         return _gameObjects;
     }
@@ -248,17 +249,19 @@ public class MyVision
             image.setRGB(x, _ground, 0xff0000);
         }
         
-        
         if (fill)
         {
             //draw connected components    
             for (ConnectedComponent d : _draw)
                 d.draw(image, false, false);
         }
+        //System.out.println(" draw shape " + _gameObjects.size());
         for (Body b : _drawShape)
-        if (b != null)
-            b.draw(g, false, Color.RED);
-            
+        {
+        	//System.out.println(" draw shape");
+        	if (b != null)
+        		b.draw(g, false, Color.RED);
+        }  
         canvas.createGraphics().drawImage(image, 0, 0, null);
     }
     public void drawObjectsWithID(BufferedImage canvas, boolean fill)
@@ -282,12 +285,12 @@ public class MyVision
                 d.draw(image, false, false);
         }
        // for (Body b : _drawShape)
-        for(Body b : _gameObjects)
+        for(Body b : _drawShape)
         if (b != null)
         	{	
         		b.draw(g, false, Color.RED);
         		g.setColor(Color.black);
-        		if(b.id != ABObject.unassigned)
+        		if(b.id != unassigned)
         			g.drawString(b.id + "", (int)b.centerX - 5, (int)b.centerY + 5);// 10: font size
         	}
             
@@ -312,4 +315,28 @@ public class MyVision
         int y = p1.y - p2.y;
         return Math.sqrt(x*x + y*y);
     }
+
+	public List<ABObject> findPigs() {
+        
+		List<ABObject> pigs = new LinkedList<ABObject>();
+		if(_gameObjects.isEmpty())
+		{
+			findObjects();
+		}
+		for (ABObject body : _gameObjects)
+		{
+			if(body.type == ABType.Pig)
+				pigs.add(body);
+		}
+		return pigs;
+	}
+	public static void main(String args[])
+	{
+		new ActionRobot();
+		BufferedImage screenshot = ActionRobot.doScreenShot();
+		Vision vision = new Vision(screenshot);
+		List<ABObject> objs = vision.findBlocksRealShape();
+		for (ABObject obj : objs)
+			System.out.println(obj);
+	}
 }

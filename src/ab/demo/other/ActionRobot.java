@@ -9,10 +9,13 @@ a ** ANGRYBIRDS AI AGENT FRAMEWORK
  *****************************************************************************/
 package ab.demo.other;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,7 +27,10 @@ import ab.server.proxy.message.ProxyDragMessage;
 import ab.server.proxy.message.ProxyMouseWheelMessage;
 import ab.server.proxy.message.ProxyScreenshotMessage;
 import ab.utils.StateUtil;
+import ab.vision.ABObject;
+import ab.vision.ABType;
 import ab.vision.GameStateExtractor.GameState;
+import ab.vision.Vision;
 
 /**
  * Util class for basic functions
@@ -36,8 +42,7 @@ public class ActionRobot {
 	public int current_score = 0;
 	private LoadingLevelSchema lls;
 	private RestartLevelSchema rls;
-	static 
-	{
+	static {
 		if (proxy == null) {
 			try {
 				proxy = new Proxy(9000) {
@@ -59,14 +64,13 @@ public class ActionRobot {
 				System.out.println("Waiting for client to connect");
 				proxy.waitForClients(1);
 
-				
-
 			} catch (UnknownHostException e) {
 
 				e.printStackTrace();
 			}
 		}
 	}
+
 	// A java util class for the standalone version. It provides common
 	// functions an agent would use. E.g. get the screenshot
 	public ActionRobot() {
@@ -118,14 +122,14 @@ public class ActionRobot {
 
 	}
 
-	public synchronized GameState checkState() {
+	public synchronized GameState getState() {
 		GameState state = StateUtil.checkCurrentState(proxy);
 		return state;
 	}
 
 	public void shoot(List<Shot> csc) {
 		ShootingSchema ss = new ShootingSchema();
-		
+
 		ss.shoot(proxy, csc);
 		System.out.println("Shooting Completed");
 		System.out
@@ -135,7 +139,6 @@ public class ActionRobot {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-	
 
 	}
 
@@ -148,29 +151,28 @@ public class ActionRobot {
 		try {
 			Thread.sleep(10000);
 		} catch (InterruptedException e) {
-		
+
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void cFastshoot(Shot shot) {
 		ShootingSchema ss = new ShootingSchema();
 		LinkedList<Shot> shots = new LinkedList<Shot>();
 		shots.add(shot);
 		ss.shoot(proxy, shots);
 	}
-	
-	
-	public void fshoot(Shot shot)
-	{
+
+	public void fshoot(Shot shot) {
 		ShootingSchema ss = new ShootingSchema();
 		LinkedList<Shot> shots = new LinkedList<Shot>();
 		shots.add(shot);
 		ss.shoot(proxy, shots);
-		//System.out.println(" tap time : " + shot.getT_tap());
+		// System.out.println(" tap time : " + shot.getT_tap());
 		System.out.println("Shooting Completed");
-		
+
 	}
+
 	public void click() {
 		proxy.send(new ProxyClickMessage(100, 100));
 	}
@@ -184,13 +186,13 @@ public class ActionRobot {
 		if (i.length > 0) {
 			level = i[0];
 		}
-		
+
 		lls.loadLevel(level);
 	}
 
 	public static void fullyZoomOut() {
 		for (int k = 0; k < 15; k++) {
-			
+
 			proxy.send(new ProxyMouseWheelMessage(-1));
 		}
 		try {
@@ -202,7 +204,7 @@ public class ActionRobot {
 
 	public static void fullyZoomIn() {
 		for (int k = 0; k < 15; k++) {
-			
+
 			proxy.send(new ProxyMouseWheelMessage(1));
 		}
 		try {
@@ -218,16 +220,43 @@ public class ActionRobot {
 		try {
 			image = ImageIO.read(new ByteArrayInputStream(imageBytes));
 		} catch (IOException e) {
-			
+
 		}
 
 		return image;
 	}
+	/*
+	 * @return the type of the bird on the sling.
+	 * 
+	 * **/
+	public ABType getBirdTypeOnSling()
+	{
+		fullyZoomIn();
+		BufferedImage screenshot = doScreenShot();
+		Vision vision = new Vision(screenshot);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+		fullyZoomOut();
+		List<ABObject> _birds = vision.findBirdsMBR();
+		if(_birds.isEmpty())
+			return ABType.Unknown;
+		Collections.sort(_birds, new Comparator<Rectangle>(){
 
+			@Override
+			public int compare(Rectangle o1, Rectangle o2) {
+				
+				return ((Integer)(o1.y)).compareTo((Integer)(o2.y));
+			}	
+		});
+		return _birds.get(0).getType();
+	}
 
 	public static void main(String args[]) {
-		
-		
+
 		long time = System.currentTimeMillis();
 		ActionRobot.doScreenShot();
 		time = System.currentTimeMillis() - time;
@@ -242,6 +271,10 @@ public class ActionRobot {
 		System.out.println(" time to take 40 screenshots"
 				+ (System.currentTimeMillis() - time));
 		System.exit(0);
-		
+
+	}
+
+	public int getScore() {
+		return StateUtil.getScore(ActionRobot.proxy);
 	}
 }

@@ -1,4 +1,4 @@
-package ab.demo;
+package ab.planner;
 
 /*****************************************************************************
 ** ANGRYBIRDS AI AGENT FRAMEWORK
@@ -25,7 +25,7 @@ import ab.server.Proxy;
 import ab.server.proxy.message.ProxyScreenshotMessage;
 import ab.utils.ImageSegFrame;
 import ab.vision.GameStateExtractor;
-import ab.vision.Vision;
+import ab.vision.VisionMBR;
 import ab.vision.VisionUtils;
 // User Interface of the trajectory module
 public class abTrajectory {
@@ -92,7 +92,7 @@ public class abTrajectory {
             }
 
             // process image
-            Vision vision = new Vision(screenshot);
+            VisionMBR vision = new VisionMBR(screenshot);
             List<Rectangle> pigs = vision.findPigsMBR();
             List<Rectangle> redBirds = vision.findRedBirds();
 
@@ -101,7 +101,7 @@ public class abTrajectory {
                 System.out.println("...could not find the slingshot");
                 continue;
             }
-            System.out.println("...found " + pigs.size() + " pigs and " + redBirds.size() + " birds");
+           // System.out.println("...found " + pigs.size() + " pigs and " + redBirds.size() + " birds");
             System.out.println("...found slingshot at " + sling.toString());
 
             // convert screenshot to grey scale and draw bounding boxes

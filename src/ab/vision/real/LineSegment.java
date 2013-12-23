@@ -26,11 +26,7 @@ public class LineSegment {
     public Point _start = null;
     public Point _end = null;
     public Point _prevEnd = null;
-    
-    private LineSegment()
-    {
-    }
-    
+
     public LineSegment(Point start, double angle)
     {
         // initialise start and end points

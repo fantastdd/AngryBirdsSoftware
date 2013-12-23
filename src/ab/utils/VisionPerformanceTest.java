@@ -3,9 +3,9 @@ package ab.utils;
 import java.awt.image.BufferedImage;
 
 import ab.demo.other.ActionRobot;
-import ab.vision.real.MyVision;
+import ab.vision.Vision;
 
-public class SpeedTest {
+public class VisionPerformanceTest {
 
 	private static void log(String message)
 	{
@@ -21,8 +21,8 @@ public class SpeedTest {
 		{
 			long time = System.nanoTime();
 			BufferedImage image = ActionRobot.doScreenShot();
-			MyVision vision = new MyVision(image);
-			//Vision vision = new Vision(image);
+			Vision vision = new Vision(image);
+			vision.findBlocksMBR();
 			log((System.nanoTime() - time) + "");
 		}
 	}

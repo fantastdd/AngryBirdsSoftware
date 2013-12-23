@@ -18,6 +18,7 @@ public enum ClientMessageTable {
 	 getState(12), getMyScore(23),fullyZoomOut(34),fullyZoomIn(35),
 	 getCurrentLevel(14), getBestScores(13) , shootSeq(33);
    
+   @SuppressWarnings("unused")
    private int message_code;
    private  ClientMessageTable(int message_code)
    {

@@ -420,7 +420,7 @@ public class TrajectoryPlanner {
         // ignore very large changes
         if (temp > 1.1 || temp < 0.9)
            {
-        	System.out.println(" temp : " + temp);
+        	//System.out.println(" temp : " + temp);
         	return;
            }
                    
@@ -463,6 +463,15 @@ public class TrajectoryPlanner {
         }      
         return activeBird;
     }  
+	public int getTapTime(Rectangle sling, Point release, Point target, int tapInterval)
+	{
+		Point tapPoint = new Point();
+		int distance = target.x - sling.x;
+		double r = ((double)tapInterval/100);
+		tapPoint.setLocation(new Point((int)(distance * r + sling.x) , target.y));
+		return getTimeByDistance(sling, release, tapPoint);
+		
+	}
     
   
 }

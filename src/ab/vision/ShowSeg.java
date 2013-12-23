@@ -35,6 +35,7 @@ import ab.utils.ImageSegFrame;
 public class ShowSeg implements Runnable {
 	private static List<Rectangle> pigs, redBirds, blueBirds, yellowBirds, blackBirds, whiteBirds, iceBlocks, woodBlocks, stoneBlocks, TNTs;
 	private static List<Point> trajPoints;
+	public  static boolean useRealshape = false;
 	static public Proxy getGameConnection(int port) {
 		Proxy proxy = null;
 		try {
@@ -58,7 +59,7 @@ public class ShowSeg implements Runnable {
 
 		return proxy;
 	}
-
+	
 	static public int[][] computeMetaInformation(BufferedImage screenshot) {
 		// image size
 		final int nHeight = screenshot.getHeight();
@@ -77,35 +78,51 @@ public class ShowSeg implements Runnable {
 
 		return meta;
 	}
-
-	static public BufferedImage analyseScreenShot(BufferedImage screenshot) {
-
-
-		/*// get game state
+	public static BufferedImage drawRealshape(BufferedImage screenshot)
+	{
+		// get game state
 		GameStateExtractor game = new GameStateExtractor();
 		GameStateExtractor.GameState state = game.getGameState(screenshot);
-	//	System.out.println(state.toString());
-
-		if (state != GameStateExtractor.GameState.PLAYING) {
-			//System.out.println("End game score : " + game.getScoreEndGame(screenshot));
+		if (state != GameStateExtractor.GameState.PLAYING) 
+		{
 			screenshot = VisionUtils.convert2grey(screenshot);
 			return screenshot;
 		}
-*/
-		//System.out.println("In game score : " + game.getScoreInGame(screenshot));
+		VisionRealShape vision = new VisionRealShape(screenshot);
+		vision.findObjects();
+		vision.findBirds();
+		vision.findSling();
+		vision.findTrajectory();
+		vision.drawObjects(screenshot, true);
+		
+		return screenshot;
+			
+	}
+	public static BufferedImage drawMBRs(BufferedImage screenshot) {
+
+
+		// get game state
+		GameStateExtractor game = new GameStateExtractor();
+		GameStateExtractor.GameState state = game.getGameState(screenshot);
+		if (state != GameStateExtractor.GameState.PLAYING) {
+			screenshot = VisionUtils.convert2grey(screenshot);
+			return screenshot;
+		}
+
+		
 		// process image
 		Vision vision = new Vision(screenshot);
-		pigs = vision.findPigsMBR();
-		redBirds = vision.findRedBirds();
-		blueBirds = vision.findBlueBirds();
-		yellowBirds = vision.findYellowBirds();
-		woodBlocks = vision.findWood();
-		stoneBlocks = vision.findStones();
-		 iceBlocks = vision.findIce();
-		whiteBirds = vision.findWhiteBirds();
-		 blackBirds = vision.findBlackBirds();
-		 TNTs = vision.findTNTs();
-		 trajPoints = vision.findTrajPoints();
+		pigs = vision.getMBRVision().findPigsMBR();
+		redBirds = vision.getMBRVision().findRedBirds();
+		blueBirds = vision.getMBRVision().findBlueBirds();
+		yellowBirds = vision.getMBRVision().findYellowBirds();
+		woodBlocks = vision.getMBRVision().findWood();
+		stoneBlocks = vision.getMBRVision().findStones();
+		iceBlocks = vision.getMBRVision().findIce();
+		whiteBirds = vision.getMBRVision().findWhiteBirds();
+		blackBirds = vision.getMBRVision().findBlackBirds();
+		TNTs = vision.getMBRVision().findTNTs();
+		trajPoints = vision.findTrajPoints();
 
 		Rectangle sling = vision.findSlingshotMBR();
 
@@ -133,7 +150,7 @@ public class ShowSeg implements Runnable {
 					Color.BLACK);
 
 			// generate traj points using estimated parameters
-			Matrix W = vision.fitParabola(trajPoints);
+			Matrix W = vision.getMBRVision().fitParabola(trajPoints);
 			int p[][] = new int[2][100];
 			int startx = (int) sling.getCenterX();
 			for (int i = 0; i < 100; i++) {
@@ -151,10 +168,12 @@ public class ShowSeg implements Runnable {
 		return screenshot;
 	}
 
-	static public void main(String[] args) {
+	public static void main(String[] args)
+	{
 
 		ImageSegFrame frame = null;
 		BufferedImage screenshot = null;
+		
 		// check command line arguments
 		if (args.length > 1) {
 			System.err.println("  USAGE: java TestVision [(<directory> | <image>)]");
@@ -163,11 +182,11 @@ public class ShowSeg implements Runnable {
 
 		// connect to game proxy if no arguments given
 		if (args.length == 0) {
-			GameStateExtractor gameStateExtractor = new GameStateExtractor();
+			
 			Proxy game = getGameConnection(9000);
 
 			while (true) {
-				// capture an image
+				// Capture an image
 				byte[] imageBytes = game.send(new ProxyScreenshotMessage());
 				try {
 					screenshot = ImageIO.read(new ByteArrayInputStream(
@@ -175,32 +194,29 @@ public class ShowSeg implements Runnable {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				System.out.println(" The game state is : " + gameStateExtractor.getGameState(screenshot));
-		
-				// analyse and show image
-				int[][] meta = computeMetaInformation(screenshot);
-				screenshot = analyseScreenShot(screenshot);
 				
+				// Analyze and show image
+				//screenshot = drawMBRs(screenshot);
+				screenshot = drawRealshape(screenshot);
 				if (frame == null) {
-					frame = new ImageSegFrame("TestVision", screenshot,
-							meta);
+					frame = new ImageSegFrame("Vision", screenshot,
+							null);
 				} else {
-					frame.refresh(screenshot, meta);
+					frame.refresh(screenshot, null);
 				}
-
-				// sleep for 100ms
+				// sleep for 50ms
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
-					// do nothing
+					System.err.println("Thread Interrupted");
 				}
 			}
 		}
 
-		// get list of images to process
+		// Get list of images to process
 		File[] images = null;
 
-		// check if argument is a directory or an image
+		// Check if argument is a directory or an image
 		if ((new File(args[0])).isDirectory()) {
 			images = new File(args[0]).listFiles(new FilenameFilter() {
 				@Override
@@ -213,14 +229,14 @@ public class ShowSeg implements Runnable {
 			images[0] = new File(args[0]);
 		}
 
-		// iterate through the images
+		// Iterate through the images
 		Arrays.sort(images);
 		for (File filename : images) {
 			if (filename.isDirectory()) {
 				continue;
 			}
 
-			// load the screenshot
+			// Load the screenshot
 			try {
 				screenshot = ImageIO.read(filename);
 			} catch (IOException e) {
@@ -230,9 +246,9 @@ public class ShowSeg implements Runnable {
 
 			// analyse and show image
 			int[][] meta = computeMetaInformation(screenshot);
-			screenshot = analyseScreenShot(screenshot);
+			screenshot = drawMBRs(screenshot);
 			if (frame == null) {
-				frame = new ImageSegFrame("TestVision", screenshot, meta);
+				frame = new ImageSegFrame("Image Segementation", screenshot, meta);
 			} else {
 				frame.refresh(screenshot, meta);
 			}
@@ -245,30 +261,33 @@ public class ShowSeg implements Runnable {
 
 	@Override
 	public void run() {
+		
 		ImageSegFrame frame = null;
 		BufferedImage screenshot = null;
-		
-       
-		while (true) {
+       	while (true) {
 			// capture an image
 		    screenshot = ActionRobot.doScreenShot();
 			// analyse and show image
-			int[][] meta = computeMetaInformation(screenshot);
-			screenshot = analyseScreenShot(screenshot);
-			
+			//int[][] meta = computeMetaInformation(screenshot);
+		    
+		    if(!useRealshape)
+		    	screenshot = drawMBRs(screenshot);
+		    else
+		    	screenshot = drawRealshape(screenshot);
+		    
 			if (frame == null) {
 
-				frame = new ImageSegFrame("TestVision", screenshot,
-						meta);
+				frame = new ImageSegFrame("Image Segmentation", screenshot,
+						null);
 			} else {
-				frame.refresh(screenshot, meta);
+				frame.refresh(screenshot, null);
 			}
 
-			// sleep for 100ms
+			// sleep for 50ms
 			try {
-				Thread.sleep(100);
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
-				// do nothing
+				System.err.println(" Thread Interrupt");
 			}
 		}
 	}

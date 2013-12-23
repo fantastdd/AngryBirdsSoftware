@@ -10,12 +10,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import ab.vision.ABType;
 import ab.vision.real.shape.Body;
 import ab.vision.real.shape.Circle;
 import ab.vision.real.shape.Poly;
 import ab.vision.real.shape.Rect;
 
-class ConnectedComponent {
+public class ConnectedComponent {
     
     // neighbour lookup table
     private static Point _connectedPoint[][][] = null;
@@ -42,8 +43,6 @@ class ConnectedComponent {
     private int _perimeter;
     private int _type;
     private int _image[][];
-    private boolean _hasLine[][];
-    private int _edgeGroup[][];
     private double _angleThreshold = 0;
     
     // points and lines in the component
@@ -319,16 +318,16 @@ class ConnectedComponent {
             
         // test for joined component
         if (areaMin > (_area + _perimeter) * JOIN_THRESHOLD)
-            return new Poly(findLines(), _left, _top, _type, _left+_width/2, _top+_height/2);
+            return new Poly(findLines(), _left, _top, assignType(_type), _left+_width/2, _top+_height/2);
             
         // test for circle
         if (areaMin * tc > areaMax && Math.abs(_width - _height) <= 3)
         {
             int r = (_width + _height) / 4 - 2;
-            return new Circle(x, y, r, _type);
+            return new Circle(x, y, r, assignType(_type));
         }
         
-        return new Rect(x, y, width, height, angle, _type);
+        return new Rect(x, y, width, height, angle, assignType(_type));
     }
     
     /* find the most likely shape of the component
@@ -337,15 +336,15 @@ class ConnectedComponent {
     public Body getShape()
     {
         if (_type == ImageSegmenter.SLING)
-            return new Rect(boundingBox(), _type);
+            return new Rect(boundingBox(), assignType(_type));
         
         if ((_type > ImageSegmenter.SLING &&
             _type <= ImageSegmenter.PIG) ||
             _type == ImageSegmenter.TRAJECTORY)
-            return new Circle(boundingBox(), _type);
+            return new Circle(boundingBox(), assignType(_type));
         
         if (_type == ImageSegmenter.HILLS)
-            return new Poly(findLines(), _left, _top, _type, _left+_width/2, _top+_height/2);
+            return new Poly(findLines(), _left, _top, assignType(_type), _left+_width/2, _top+_height/2);
         
         ArrayList<Point> corners = new ArrayList<Point>();
         // use all edge points if the shape is small
@@ -478,7 +477,20 @@ class ConnectedComponent {
             }
         }
     }
-    
+    public ABType assignType(int vision_type)
+    {
+    	ABType type = ABType.Unknown;
+    	switch(vision_type)
+    	{
+    		case ImageSegmenter.PIG: type = ABType.Pig; break;
+    		case ImageSegmenter.STONE: type = ABType.Stone;break;
+    		case ImageSegmenter.WOOD: type = ABType.Wood; break;
+    		case ImageSegmenter.ICE: type = ABType.Ice; break;
+    		case ImageSegmenter.HILLS: type = ABType.Hill; break;
+    		default: type = ABType.Unknown;
+    	}
+    	return type;
+    }
         
     private final static int xClock[][] = {{0, -1, -1},
                                            {0, 0, 0},

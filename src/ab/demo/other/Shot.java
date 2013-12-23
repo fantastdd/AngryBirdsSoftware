@@ -59,7 +59,12 @@ public class Shot {
 	private int t_tap;
 public Shot()
 {
-	
+	x = 0;
+	y = 0;
+	dx = 0;
+	dy = 0;
+	t_shot = 0;
+	t_tap = 0;
 }
 
 

@@ -17,19 +17,17 @@ import java.util.List;
 import ab.server.Proxy;
 import ab.server.proxy.message.ProxyDragMessage;
 
+/**
+ * Shooting Schema for standalone version.
+ * */
 public class ShootingSchema {
-private LinkedList<Shot> shootings;
 private boolean shootImmediately = true;
-//This schema is used for automatically shooting in the standalone version. 
-public ShootingSchema()
-{
-  shootings = new LinkedList<Shot>();	
 
-}
 
 public void shoot(final Proxy proxy,List<Shot> csc)
 {
 	int count = 0;
+	LinkedList<Shot> shots = new LinkedList<Shot>();	
     for(Shot shot:csc)
     {
     	if(shot.getT_shot() != 0)
@@ -37,20 +35,20 @@ public void shoot(final Proxy proxy,List<Shot> csc)
     	if(shootImmediately)
     	{
     		int t_shot = 5000 * count++;
-    		shootings.add(new Shot(shot.getX(),shot.getY(),shot.getDx(),shot.getDy(),t_shot));
+    		shots.add(new Shot(shot.getX(),shot.getY(),shot.getDx(),shot.getDy(),t_shot));
     		if(shot.getT_tap() > 0)
-        		shootings.add(new  Shot(0,0,0,0, shot.getT_tap() + t_shot));
+        		shots.add(new  Shot(0,0,0,0, shot.getT_tap() + t_shot));
     	}
     	else
     	{
-    		shootings.add(new  Shot(shot.getX(),shot.getY(),shot.getDx(),shot.getDy(),shot.getT_shot()));
+    		shots.add(new  Shot(shot.getX(),shot.getY(),shot.getDx(),shot.getDy(),shot.getT_shot()));
     		if(shot.getT_tap() > 0)
-        		shootings.add(new Shot(0,0,0,0,shot.getT_tap() + shot.getT_shot()));
+        		shots.add(new Shot(0,0,0,0,shot.getT_tap() + shot.getT_shot()));
     	}
     	
     }
 	
-	Collections.sort(shootings, new Comparator<Shot>(){
+	Collections.sort(shots, new Comparator<Shot>(){
 
 		@Override
 		public int compare(Shot arg0, Shot arg1) {
@@ -58,24 +56,24 @@ public void shoot(final Proxy proxy,List<Shot> csc)
 			return ((Integer)arg0.getT_shot()).compareTo(arg1.getT_shot());
 		}
     	});
-	if(!shootings.isEmpty())
+	if(!shots.isEmpty())
 	{
-			   int start_time = shootings.getFirst().getT_shot();
+			   int start_time = shots.getFirst().getT_shot();
 		       //Optimize for one shot one time..
-			   if(shootings.size() < 3)
+			   if(shots.size() < 3)
 			   {
-				   Shot shot = shootings.getFirst();
-				   if(shootings.size() == 2)
+				   Shot shot = shots.getFirst();
+				   if(shots.size() == 2)
 				   {
-					   Shot _shot = shootings.getLast();
-					   int wait_time = (_shot.getT_shot() - start_time)==0?start_time:(_shot.getT_shot()- start_time);
+					   Shot _shot = shots.getLast();
+					   int wait_time = (_shot.getT_shot() - start_time)==0? start_time:(_shot.getT_shot()- start_time);
 					   long _gap = System.currentTimeMillis();
 					   proxy.send(new ProxyDragMessage(shot.getX(),shot.getY(),shot.getDx(),shot.getDy()));
 					   long gap = System.currentTimeMillis() - _gap;
 					   wait_time -= gap;
 					   if(wait_time < 0)
 						   wait_time = 0;
-					   long time = System.nanoTime();
+					   //long time = System.nanoTime();
 					   try {
 						   Thread.sleep(wait_time);
 					   } catch (InterruptedException e) {
@@ -94,14 +92,13 @@ public void shoot(final Proxy proxy,List<Shot> csc)
 			   else
 			   {  
 				   long gap = 0;
-				   for(Shot _shot: shootings)
+				   for(Shot _shot: shots)
 				   {
-					   long wait_time = (_shot.getT_shot() - start_time - gap) <=0?0:(_shot.getT_shot()- start_time - gap);
+					   long wait_time = (_shot.getT_shot() - start_time - gap) <=0 ? 0:(_shot.getT_shot()- start_time - gap);
 					   
 					   try {
 						   Thread.sleep(wait_time);
 						} catch (InterruptedException e) {
-							System.out.println(" exception thrown from shooting schema ");
 							e.printStackTrace();
 						}
 					    start_time =  _shot.getT_shot();

@@ -16,8 +16,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.java_websocket.WebSocket;
-
 import ab.server.Proxy;
 import ab.server.proxy.message.ProxyScreenshotMessage;
 import ab.vision.GameStateExtractor;
@@ -41,18 +39,10 @@ public class StateUtil {
 	        }
 	        GameStateExtractor gameStateExtractor = new GameStateExtractor();
 	        GameStateExtractor.GameState state = gameStateExtractor.getGameState(image);
-	        System.out.println("the game state is :     " + state);
 		  return state;
 	}
-	public static  GameState  checkCurrentState(BufferedImage image)
-	{
-		 
-	        GameStateExtractor gameStateExtractor = new GameStateExtractor();
-	        GameStateExtractor.GameState state = gameStateExtractor.getGameState(image);
-	        System.out.println("the game state is :     " + state);
-		  return state;
-	}
-	public static int checkCurrentScore(Proxy proxy)
+
+	private static int _getScore(Proxy proxy)
 	{
 		byte[] imageBytes = proxy.send(new ProxyScreenshotMessage());
         int score = -1;
@@ -62,7 +52,7 @@ public class StateUtil {
 	           image = ImageIO.read(new ByteArrayInputStream(imageBytes));
 	        } 
 	    catch (IOException e) {
-	            // do something
+	           e.printStackTrace();
 	        }
 	    
         GameStateExtractor gameStateExtractor = new GameStateExtractor();
@@ -73,16 +63,20 @@ public class StateUtil {
         	if(state == GameState.WON)
         		score = gameStateExtractor.getScoreEndGame(image);
        if(score == -1)
-    	   System.out.println(" the game score is unavailable "); 
-    
-    	   
+    	   System.out.println(" Game score is unavailable "); 	   
 		return score;
 	}
-	public static int checkCurrentScoreSafemode(Proxy proxy)
+	/**
+	 * The method checks the score every second, and return when the score is stable (not flashing).
+	 * 
+	 * @return score: the current score.
+	 * 
+	 * */
+	public static int getScore(Proxy proxy)
 	{
 
 		int current_score = -1;
-		while (current_score != checkCurrentScore(proxy)) 
+		while (current_score != _getScore(proxy)) 
 		{
 		  try {
 				Thread.sleep(1000);
@@ -92,11 +86,10 @@ public class StateUtil {
 			}
 		   if(checkCurrentState(proxy) == GameState.WON)
 		   {	
-			   current_score = checkCurrentScore(proxy);
-				//System.out.println("Debug Check the score: " + current_score);
+			   current_score = _getScore(proxy);
 		   }
 		   else
-			   System.out.println(" unexpected state: PLAYING");
+			   System.out.println(" Unexpected state: PLAYING");
 		}
 		return current_score;
 	}

@@ -34,7 +34,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolTip;
 import javax.swing.Popup;
@@ -42,7 +41,6 @@ import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;
 
 import ab.demo.other.ActionRobot;
-import ab.objtracking.RealTimeTracking;
 import ab.vision.VisionUtils;
 
 public class ImageSegFrame {
@@ -114,30 +112,12 @@ public class ImageSegFrame {
 
         public void keyPressed(KeyEvent key) {
             // process key
-        	if(key.getKeyCode() == KeyEvent.VK_Q)
-        	{
-        		int option = JOptionPane.showConfirmDialog(null, "Set the current scenario as the initial");
-        		if(option == JOptionPane.YES_OPTION)
-        			RealTimeTracking.flipAskForInitialScenario();
-        	}
-        	else
+        
             if (key.getKeyCode() == KeyEvent.VK_ENTER) {
                 _parent.setVisible(false);
                 _parent.dispose();
 
-            } else if (key.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            	
-            	saveAndExit = true;
-                //System.exit(0);
-
-            }
-            else if(key.getKeyCode() == KeyEvent.VK_E)
-            {
-            	recordScreenshot = !recordScreenshot;
-            	System.out.println("Start to record");
-            	
-            }
-            
+            } 
             else if (key.getKeyCode() == KeyEvent.VK_D) {
             	
 	                String imgFilename = saveFileDir + String.format("img%04d.png", _saveCount);
@@ -328,11 +308,12 @@ public class ImageSegFrame {
 	    	frame.setBounds(bound_x, bound_y, frame.getSize().width, frame.getSize().height);
 	    else
   	    {
-	    	GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-  	        GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
-  	        Rectangle rect = defaultScreen.getDefaultConfiguration().getBounds();
-  	        //int x = (int) rect.getMaxX() - frame.getWidth();
-  	        int x = 0;
+	    	/*
+	    	 * GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+  	        	GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
+  	        	int x = (int) rect.getMaxX() - frame.getWidth();
+	    	 */  	        
+	    	int x = 0;
   	        int y = 0;
   	        frame.setLocation(x, y);
   	        

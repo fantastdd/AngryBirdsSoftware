@@ -15,11 +15,13 @@ import ab.server.proxy.message.ProxyMouseWheelMessage;
 import ab.utils.StateUtil;
 import ab.vision.GameStateExtractor.GameState;
 
+/**
+ * Schema for loading level 
+ * */
 public class LoadingLevelSchema {
 private Proxy proxy;
-private int current = -1;
 private boolean pageSwitch = false;
-// This schema is used for automatically loading levels in the Standalone version. 
+
 public LoadingLevelSchema(Proxy proxy)
 {
 	this.proxy = proxy;
@@ -190,7 +192,7 @@ private boolean loadLevel(GameState state,int i)
 	 
      }
      
-     current = i;
+   
    //  System.out.println("current: " + current + "  i  " + i);
      return true;
 
