@@ -48,7 +48,7 @@ public class ClientMessageEncoder {
 		return message;
 	}
 
-	//encode cshoot message
+	//encode cshoot message (safe mode)
 	public static byte[] cshoot(byte[] fx, byte[] fy, byte[] dx, byte[] dy,
 			byte[] t1, byte[] t2) {
 		byte[] message = new byte[1 + fx.length + fy.length + dx.length
@@ -61,7 +61,7 @@ public class ClientMessageEncoder {
 
 	}
 
-	//encode pshoot message
+	//encode pshoot message (safe mode)
 	public static byte[] pshoot(byte[] fx, byte[] fy, byte[] dx, byte[] dy,
 			byte[] t1, byte[] t2) {
 		byte[] message = new byte[1 + fx.length + fy.length + dx.length
@@ -70,10 +70,32 @@ public class ClientMessageEncoder {
 				new byte[] { ClientMessageTable
 						.getValue(ClientMessageTable.pshoot) },
 				fx, fy, dx, dy, t1, t2);
-		System.out.println("send shoot :" + message.toString());
 		return message;
 	}
+	//encode pshoot message in fast mode
+	public static byte[] pFastshoot(byte[] fx, byte[] fy, byte[] dx, byte[] dy,
+			byte[] t1, byte[] t2) {
+		byte[] message = new byte[1 + fx.length + fy.length + dx.length
+				+ dy.length + t1.length + t2.length];
+		message = mergeArray(
+				new byte[] { ClientMessageTable
+						.getValue(ClientMessageTable.pFastshoot) },
+				fx, fy, dx, dy, t1, t2);
+		return message;
+	}
+	//encode cshoot message in fast mode
+	public static byte[] cFastshoot(byte[] fx, byte[] fy, byte[] dx, byte[] dy,
+			byte[] t1, byte[] t2) {
+		byte[] message = new byte[1 + fx.length + fy.length + dx.length
+				+ dy.length + t1.length + t2.length];
+		message = mergeArray(
+				new byte[] { ClientMessageTable
+						.getValue(ClientMessageTable.cFastshoot) },
+				fx, fy, dx, dy, t1, t2);
+		return message;
 
+	}
+	
 	//encode fully zoom out message 
 	public static byte[] fullyZoomOut() {
 		byte[] message = { ClientMessageTable
