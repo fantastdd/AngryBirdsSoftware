@@ -1,7 +1,7 @@
 /*****************************************************************************
  ** ANGRYBIRDS AI AGENT FRAMEWORK
- ** Copyright (c) 2013, XiaoYu (Gary) Ge, Stephen Gould, Jochen Renz
- **  Sahan Abeyasinghe,Jim Keys, Kar-Wai Lim, Zain Mubashir, Andrew Wang, Peng Zhang
+ ** Copyright (c) 2014, XiaoYu (Gary) Ge, Stephen Gould, Jochen Renz
+ **  Sahan Abeyasinghe,Jim Keys,  Andrew Wang, Peng Zhang
  ** All rights reserved.
  **This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
  **To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ 
@@ -22,22 +22,21 @@ public class Rect extends Body
 	private static final long serialVersionUID = 1L;
 	// width and height of the rectangle
     public Polygon p;
-   protected double preciseWidth = -1, preciseHeight = -1;
+   protected double pwidth = -1, plength = -1;
     
-    public double getPreciseWidth()
+    public double getpWidth()
     {
-	   	 if(preciseWidth != -1)
-	   		 return preciseWidth;
+	   	 if(pwidth != -1)
+	   		 return pwidth;
 	   	 return width;
     }
     
-    public double getPreciseHeight()
+    public double getpLength()
     {
-   	 if(preciseHeight != -1)
-   		 return preciseHeight;
-   	 return height;
+	   	 if(plength != -1)
+	   		 return plength;
+	   	 return height;
     }
-    //Note Rect's width is not always the Rectangle's width 
     public Rect(double xs, double ys,  double w, double h, double theta, ABType type)
     {
         
@@ -45,25 +44,27 @@ public class Rect extends Body
         if (h >= w)
         {
             angle = theta;
-            preciseWidth = w;
-            preciseHeight = h;
+            pwidth = w;
+            plength = h;
         }
         else
         {
             angle = theta + Math.PI / 2;
-            preciseWidth = h;
-            preciseHeight = w;
+            pwidth = h;
+            plength = w;
         }
         
         centerY = ys;
         centerX = xs;
         
         
-        area = (int) (preciseWidth * preciseHeight);
+        area = (int) (pwidth * plength);
         this.type  = type;
       
         createPolygon();
         super.setBounds(p.getBounds());
+        width = p.getBounds().width;
+  	  	height = p.getBounds().height;
 
     } 
 
@@ -76,36 +77,36 @@ public class Rect extends Body
          
          // starting point for drawing
          double _xs, _ys;
-         _ys = centerY + Math.sin(angle) * preciseHeight / 2 + 
-              Math.sin(Math.abs(Math.PI/2 - angle)) * preciseWidth / 2;
+         _ys = centerY + Math.sin(angle) * plength / 2 + 
+              Math.sin(Math.abs(Math.PI/2 - angle)) * pwidth / 2;
          if (angle < Math.PI / 2)
-             _xs = centerX + Math.cos(angle) * preciseHeight / 2 -
-                 Math.sin(angle) * preciseWidth / 2;
+             _xs = centerX + Math.cos(angle) * plength / 2 -
+                 Math.sin(angle) * pwidth / 2;
          else if (angle > Math.PI / 2)
-             _xs = centerX + Math.cos(angle) * preciseHeight / 2 +
-                 Math.sin(angle) * preciseWidth / 2;
+             _xs = centerX + Math.cos(angle) * plength / 2 +
+                 Math.sin(angle) * pwidth / 2;
          else
-             _xs = centerX - preciseWidth / 2;
+             _xs = centerX - pwidth / 2;
              
          p = new Polygon();
          p.addPoint(round(_xs), round(_ys));
          
         
          
-         _xs -= Math.cos(angle1) * preciseHeight;
-         _ys -= Math.sin(angle1) * preciseHeight;
+         _xs -= Math.cos(angle1) * plength;
+         _ys -= Math.sin(angle1) * plength;
          p.addPoint(round(_xs), round(_ys));
          
        
          
-         _xs -= Math.cos(angle2) * preciseWidth;
-         _ys -= Math.sin(angle2) * preciseWidth;
+         _xs -= Math.cos(angle2) * pwidth;
+         _ys -= Math.sin(angle2) * pwidth;
          p.addPoint(round(_xs), round(_ys));
          
          
          
-         _xs += Math.cos(angle1) * preciseHeight;
-         _ys += Math.sin(angle1) * preciseHeight;
+         _xs += Math.cos(angle1) * plength;
+         _ys += Math.sin(angle1) * plength;
          p.addPoint(round(_xs), round(_ys));
    
     }
@@ -119,20 +120,20 @@ public class Rect extends Body
     {
         centerX = (box[0] + box[2]) / 2.0;
         centerY = (box[3] + box[1]) / 2.0;
-        preciseWidth = box[2] - box[0];
-        preciseHeight = box[3] - box[1];
+        pwidth = box[2] - box[0];
+        plength = box[3] - box[1];
         angle = Math.PI / 2;
         
-        if (preciseHeight < preciseWidth)
+        if (plength < pwidth)
         {
-            preciseWidth = preciseHeight;
-            preciseHeight = box[2] - box[0];
+            pwidth = plength;
+            plength = box[2] - box[0];
             angle = 0;
         }
        
         
-        width = (int)preciseWidth;
-        height = (int)preciseHeight;
+        width = (int)pwidth;
+        height = (int)plength;
         
         this.type = type;
         
@@ -140,17 +141,19 @@ public class Rect extends Body
         createPolygon();
       
     }
-    public Rect(double centerX, double centerY, double width, double height, double angle, ABType type, int area)
+    public Rect(double centerX, double centerY, double pwidth, double plength, double angle, ABType type, int area)
     {
     	  this.centerX = centerX;
     	  this.centerY = centerY;
-    	  this.width = (int)width;
-    	  this.height = (int)height;
+    	  this.pwidth = pwidth;
+    	  this.plength = plength;
     	  this.type = type;
     	  this.angle = angle;
     	  this.area = area;
     	  createPolygon();
     	  super.setBounds(p.getBounds());
+    	  width = p.getBounds().width;
+    	  height = p.getBounds().height;
           	
     }
 
@@ -177,6 +180,6 @@ public class Rect extends Body
 	
 	public String toString()
 	{
-		return String.format("Rect: id:%d type:%s Area:%d w:%7.3f h:%7.3f a:%3.3f at x:%3.1f y:%3.1f", id, type, area, preciseWidth, preciseHeight, angle, centerX, centerY);
+		return String.format("Rect: id:%d type:%s Area:%d w:%7.3f h:%7.3f a:%3.3f at x:%3.1f y:%3.1f", id, type, area, pwidth, plength, angle, centerX, centerY);
 	}
 }

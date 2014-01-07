@@ -1,7 +1,7 @@
 /*****************************************************************************
 a ** ANGRYBIRDS AI AGENT FRAMEWORK
- ** Copyright (c) 2013,XiaoYu (Gary) Ge, Stephen Gould,Jochen Renz
- **  Sahan Abeyasinghe, Jim Keys, Kar-Wai Lim, Zain Mubashir,  Andrew Wang, Peng Zhang
+ ** Copyright (c) 2014,XiaoYu (Gary) Ge, Stephen Gould,Jochen Renz
+ **  Sahan Abeyasinghe, Jim Keys,   Andrew Wang, Peng Zhang
  ** All rights reserved.
  **This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
  **To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ 
