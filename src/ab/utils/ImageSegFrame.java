@@ -307,12 +307,7 @@ public class ImageSegFrame {
 	    if(bound_x != -1 && bound_y != -1)
 	    	frame.setBounds(bound_x, bound_y, frame.getSize().width, frame.getSize().height);
 	    else
-  	    {
-	    	/*
-	    	 * GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-  	        	GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
-  	        	int x = (int) rect.getMaxX() - frame.getWidth();
-	    	 */  	        
+  	    {      
 	    	int x = 0;
   	        int y = 0;
   	        frame.setLocation(x, y);

@@ -32,7 +32,7 @@ public class ClientNaiveAgent implements Runnable {
 	public byte currentLevel = -1;
 	public int failedCounter = 0;
 	public int[] solved;
-	TrajectoryPlanner tp;
+	TrajectoryPlanner tp; 
 	private int id = 28888;
 	private boolean firstShot;
 	private Point prevTarget;

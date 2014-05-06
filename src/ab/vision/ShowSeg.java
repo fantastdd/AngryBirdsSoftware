@@ -90,7 +90,12 @@ public class ShowSeg implements Runnable {
 			return screenshot;
 		}
 	    vision = new VisionRealShape(screenshot);
-		vision.findObjects();
+		
+	    List<ABObject> objs = vision.findObjects();
+		
+	    for (ABObject obj : objs)
+			System.out.println("ShowSeg::drawRealshape " + obj);
+		
 		vision.findBirds();
 		vision.findSling();
 		vision.findTrajectory();
