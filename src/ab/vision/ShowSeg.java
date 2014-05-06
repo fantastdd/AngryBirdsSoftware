@@ -36,6 +36,7 @@ public class ShowSeg implements Runnable {
 	private static List<Rectangle> pigs, redBirds, blueBirds, yellowBirds, blackBirds, whiteBirds, iceBlocks, woodBlocks, stoneBlocks, TNTs;
 	private static List<Point> trajPoints;
 	public  static boolean useRealshape = false;
+	private static VisionRealShape vision;
 	static public Proxy getGameConnection(int port) {
 		Proxy proxy = null;
 		try {
@@ -88,7 +89,7 @@ public class ShowSeg implements Runnable {
 			screenshot = VisionUtils.convert2grey(screenshot);
 			return screenshot;
 		}
-		VisionRealShape vision = new VisionRealShape(screenshot);
+	    vision = new VisionRealShape(screenshot);
 		vision.findObjects();
 		vision.findBirds();
 		vision.findSling();

@@ -9,9 +9,13 @@
  *****************************************************************************/
 package ab.vision.real;
 
-import java.awt.*;
-import java.awt.image.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 
 public class ImageSegmenter {
@@ -238,26 +242,26 @@ public class ImageSegmenter {
         int G1[][][] = new int[_height][_width][4];
         int G2[][][] = new int[_height][_width][4];
         boolean isEdge[][][] = new boolean[_height][_width][4];
-        
+       
         // calculate individual edge strength in each direction
-        for (int y = _height-2; y > 0; y--)
-        for (int x = 1; x < _width - 1; x++)
-        {
-            for (int o = 0; o < 4; o++)
-            {
-                int x2 = x + NEIGHBOURS[o][0];
-                int y2 = y + NEIGHBOURS[o][1];
-                int x3 = x + NEIGHBOURS[o][2];
-                int y3 = y + NEIGHBOURS[o][3];
-                
-                G[y][x][o] = distance(x, y, x2, y2) + distance(x, y, x3, y3);
-            }
-            G[y][x][0] *= 1.5;
-            G[y][x][2] *= 1.5;
-        }
+        for (int y = _height - 2; y > 0; y--)
+	        for (int x = 1; x < _width - 1; x++)
+	        {
+	            for (int o = 0; o < 4; o++)
+	            {
+	                int x2 = x + NEIGHBOURS[o][0];
+	                int y2 = y + NEIGHBOURS[o][1];
+	                int x3 = x + NEIGHBOURS[o][2];
+	                int y3 = y + NEIGHBOURS[o][3];
+	                
+	                G[y][x][o] = distance(x, y, x2, y2) + distance(x, y, x3, y3);
+	            }
+	            G[y][x][0] *= 1.5;
+	            G[y][x][2] *= 1.5;
+	        }
         
         // cross-correlate with neighbouring points
-        for (int y = _height-3; y > 1; y--)
+        for (int y = _height - 3; y > 1; y--)
         for (int x = 2; x < _width - 2; x++)
         {
             for (int o = 0; o < 4; o++)
@@ -274,25 +278,25 @@ public class ImageSegmenter {
         
         // apply non-maximum suppression for each direction
         for (int y = _height-3; y > 1; y--)
-        for (int x = 2; x < _width-2; x++)
-        {
-            for (int o = 0; o < 4; o++)
-            {
-                G2[y][x][o] = G1[y][x][o];
-                   
-                int x1 = x + NEIGHBOURS[o][0];
-                int y1 = y + NEIGHBOURS[o][1];
-                int x2 = x + NEIGHBOURS[o][2];
-                int y2 = y + NEIGHBOURS[o][3];
-                
-                if (G1[y][x][o] <= G1[y1][x1][o] || G1[y][x][o] < G1[y2][x2][o])
-                    G2[y][x][o] = 0;
-            }
+        	for (int x = 2; x < _width-2; x++)
+        	{
+	            for (int o = 0; o < 4; o++)
+	            {
+	                G2[y][x][o] = G1[y][x][o];
+	                   
+	                int x1 = x + NEIGHBOURS[o][0];
+	                int y1 = y + NEIGHBOURS[o][1];
+	                int x2 = x + NEIGHBOURS[o][2];
+	                int y2 = y + NEIGHBOURS[o][3];
+	                
+	                if (G1[y][x][o] <= G1[y1][x1][o] || G1[y][x][o] < G1[y2][x2][o])
+	                    G2[y][x][o] = 0;
+	            }
         }
         
         // Trace edge using two thresholds       
-        for (int y = _height-3; y > 1; y--)
-        for (int x = 2; x < _width-2; x++)
+        for (int y = _height - 3; y > 1; y--)
+        for (int x = 2; x < _width - 2; x++)
         {
             // add pixel if gradient is greater than threshold1
             for (int o = 0; o < 4; o++)                   
@@ -330,8 +334,8 @@ public class ImageSegmenter {
         
         // combine edge in all four directions
         boolean ret[][] = new boolean[_height][_width];
-        for (int y = _height-3; y > 1; y--)
-        for (int x = 2; x < _width-2; x++)
+        for (int y = _height - 3; y > 1; y--)
+        for (int x = 2; x < _width - 2; x++)
         {
             if (isEdge[y][x][0] || isEdge[y][x][1] ||
                 isEdge[y][x][2] || isEdge[y][x][3])
@@ -380,6 +384,7 @@ public class ImageSegmenter {
                     _components.add(cc);
             }  
         }
+        //_edges = null;
         return _components;
     }
 
@@ -710,6 +715,7 @@ public class ImageSegmenter {
             
         return d > EDGE_BOUND ? EDGE_BOUND : d;
     }
+    
     
 
 }

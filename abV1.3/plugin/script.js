@@ -1,7 +1,7 @@
 /*****************************************************************************
 ** ANGRYBIRDS AI AGENT FRAMEWORK
 ** Copyright (c) 2014, Sahan Abeyasinghe, XiaoYu (Gary) Ge, Stephen Gould,
-** Jim Keys, Jochen Renz
+** Jim Keys,Jochen Renz
 ** All rights reserved.
 **
 ** This software is distributed under terms of the BSD license. See the 
