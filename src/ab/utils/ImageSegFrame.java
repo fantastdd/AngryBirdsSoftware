@@ -387,9 +387,6 @@ public class ImageSegFrame {
     			time = System.nanoTime();
     			screenshot = ActionRobot.doScreenShot();
     			images.add(screenshot);
-    			//String imgFilename = saveFileDir + String.format("img%04d.png", _saveCount ++);
-	    		//ImageIO.write(screenshot, "png", new File(imgFilename));
-	            //System.out.println("saving image to " + imgFilename + " Time: " + (System.nanoTime() - time) + "");
 	    		Thread.sleep(timegap);
 	    		avg += (System.nanoTime() - time);
     		} 

@@ -263,7 +263,7 @@ public class VisionMBR {
 	}
 
 	// find birds in the current scene
-	public List<Rectangle> findRedBirds() {
+	public List<Rectangle> findRedBirdsMBRs() {
 		ArrayList<Rectangle> objects = new ArrayList<Rectangle>();
 
 		// test for red birds (385, 488, 501)
@@ -312,7 +312,7 @@ public class VisionMBR {
 		return objects;
 	}
 
-	public List<Rectangle> findBlueBirds() {
+	public List<Rectangle> findBlueBirdsMBRs() {
 		ArrayList<Rectangle> objects = new ArrayList<Rectangle>();
 
 		// test for blue birds (238)
@@ -374,7 +374,7 @@ public class VisionMBR {
 		return objects;
 	}
 
-	public List<Rectangle> findYellowBirds() {
+	public List<Rectangle> findYellowBirdsMBRs() {
 		ArrayList<Rectangle> objects = new ArrayList<Rectangle>();
 
 		// test for blue birds (497)
@@ -414,7 +414,7 @@ public class VisionMBR {
 		return objects;
 	}
 
-	public List<Rectangle> findWhiteBirds() {
+	public List<Rectangle> findWhiteBirdsMBRs() {
 		ArrayList<Rectangle> objects = new ArrayList<Rectangle>();
 
 		// test for white birds (490)
@@ -461,10 +461,10 @@ public class VisionMBR {
 		return objects;
 	}
 	public List<ABObject> findBlocks(){
-		List<Rectangle> stone = findStones();
-		List<Rectangle> wood = findWood();
-		List<Rectangle> ice = findIce();
-		List<Rectangle> tnt = findTNTs();
+		List<Rectangle> stone = findStonesMBR();
+		List<Rectangle> wood = findWoodMBR();
+		List<Rectangle> ice = findIceMBR();
+		List<Rectangle> tnt = findTNTsMBR();
 		List<ABObject> objects = new LinkedList<ABObject>();
 		objects.addAll(constructABObjects(stone,ABType.Stone));
 		objects.addAll(constructABObjects(wood,ABType.Wood));
@@ -474,11 +474,11 @@ public class VisionMBR {
 	}
 	public List<ABObject> findBirds(){
 		
-		List<Rectangle> rbirds = findRedBirds();
-		List<Rectangle> ybirds = findYellowBirds();
-		List<Rectangle> blbirds = findBlueBirds();
-		List<Rectangle> blackbirds = findBlackBirds();
-		List<Rectangle> wbirds = findWhiteBirds();
+		List<Rectangle> rbirds = findRedBirdsMBRs();
+		List<Rectangle> ybirds = findYellowBirdsMBRs();
+		List<Rectangle> blbirds = findBlueBirdsMBRs();
+		List<Rectangle> blackbirds = findBlackBirdsMBRs();
+		List<Rectangle> wbirds = findWhiteBirdsMBRs();
 		List<ABObject> objects = new LinkedList<ABObject>();
 		objects.addAll(constructABObjects(rbirds, ABType.RedBird));
 		objects.addAll(constructABObjects(ybirds,ABType.YellowBird));
@@ -500,7 +500,8 @@ public class VisionMBR {
 		if(type == ABType.Wood || type == ABType.Ice || type == ABType.Stone || type == ABType.TNT)
 			for(Rectangle rec: mbrs)
 				objects.add(new ABObject(rec, type));
-		else if(type == ABType.Pig)
+		else 
+			if(type == ABType.Pig)
 				for(Rectangle rec: mbrs)
 					objects.add(new ABObject(rec, type));
 		else
@@ -508,7 +509,7 @@ public class VisionMBR {
 				objects.add(new ABObject(rec, type));
 		return objects;
 	}
-	public List<Rectangle> findBlackBirds() {
+	public List<Rectangle> findBlackBirdsMBRs() {
 		ArrayList<Rectangle> objects = new ArrayList<Rectangle>();
 
 		// test for white birds (488)
@@ -550,7 +551,7 @@ public class VisionMBR {
 
 		return objects;
 	}
-	public List<Rectangle> findStones() {
+	public List<Rectangle> findStonesMBR() {
 		ArrayList<Rectangle> objects = new ArrayList<Rectangle>();
 
 		
@@ -621,7 +622,7 @@ public class VisionMBR {
 		return objects;
 	}
 
-	public List<Rectangle> findIce() {
+	public List<Rectangle> findIceMBR() {
 		ArrayList<Rectangle> objects = new ArrayList<Rectangle>();
 
 	
@@ -695,7 +696,7 @@ public class VisionMBR {
 		return objects;
 	}
 
-	public List<Rectangle> findWood() {
+	public List<Rectangle> findWoodMBR() {
 		ArrayList<Rectangle> objects = new ArrayList<Rectangle>();
 
 		
@@ -776,8 +777,13 @@ public class VisionMBR {
 
 		return objects;
 	}
-
-	public List<Rectangle> findTNTs() {
+	
+	public List<ABObject> findTNTs()
+	{
+		List<Rectangle> tnts = findTNTsMBR();
+		return constructABObjects(tnts, ABType.TNT);
+	}
+	public List<Rectangle> findTNTsMBR() {
 		ArrayList<Rectangle> objects = new ArrayList<Rectangle>();
 
 		Boolean ignore[] = new Boolean[_nSegments];

@@ -561,15 +561,15 @@ public class VisionUtils {
 		// process image
 		VisionMBR vision = new VisionMBR(screenshot);
 		List<Rectangle> pigs = vision.findPigsMBR();
-		List<Rectangle> redBirds = vision.findRedBirds();
-		List<Rectangle> blueBirds = vision.findBlueBirds();
-		List<Rectangle> yellowBirds = vision.findYellowBirds();
-		List<Rectangle> woodBlocks = vision.findWood();
-		List<Rectangle> stoneBlocks = vision.findStones();
-		List<Rectangle> iceBlocks = vision.findIce();
-		List<Rectangle> whiteBirds = vision.findWhiteBirds();
-		List<Rectangle> blackBirds = vision.findBlackBirds();
-		List<Rectangle> TNTs = vision.findTNTs();
+		List<Rectangle> redBirds = vision.findRedBirdsMBRs();
+		List<Rectangle> blueBirds = vision.findBlueBirdsMBRs();
+		List<Rectangle> yellowBirds = vision.findYellowBirdsMBRs();
+		List<Rectangle> woodBlocks = vision.findWoodMBR();
+		List<Rectangle> stoneBlocks = vision.findStonesMBR();
+		List<Rectangle> iceBlocks = vision.findIceMBR();
+		List<Rectangle> whiteBirds = vision.findWhiteBirdsMBRs();
+		List<Rectangle> blackBirds = vision.findBlackBirdsMBRs();
+		List<Rectangle> TNTs = vision.findTNTsMBR();
 		List<Point> trajPoints = vision.findTrajPoints();
 
 		Rectangle sling = vision.findSlingshotMBR();

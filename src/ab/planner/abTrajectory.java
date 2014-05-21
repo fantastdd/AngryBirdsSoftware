@@ -94,7 +94,7 @@ public class abTrajectory {
             // process image
             VisionMBR vision = new VisionMBR(screenshot);
             List<Rectangle> pigs = vision.findPigsMBR();
-            List<Rectangle> redBirds = vision.findRedBirds();
+            List<Rectangle> redBirds = vision.findRedBirdsMBRs();
 
             Rectangle sling = vision.findSlingshotMBR();
             if (sling == null) {

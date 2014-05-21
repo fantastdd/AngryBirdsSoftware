@@ -118,15 +118,15 @@ public class ShowSeg implements Runnable {
 		// process image
 		Vision vision = new Vision(screenshot);
 		pigs = vision.getMBRVision().findPigsMBR();
-		redBirds = vision.getMBRVision().findRedBirds();
-		blueBirds = vision.getMBRVision().findBlueBirds();
-		yellowBirds = vision.getMBRVision().findYellowBirds();
-		woodBlocks = vision.getMBRVision().findWood();
-		stoneBlocks = vision.getMBRVision().findStones();
-		iceBlocks = vision.getMBRVision().findIce();
-		whiteBirds = vision.getMBRVision().findWhiteBirds();
-		blackBirds = vision.getMBRVision().findBlackBirds();
-		TNTs = vision.getMBRVision().findTNTs();
+		redBirds = vision.getMBRVision().findRedBirdsMBRs();
+		blueBirds = vision.getMBRVision().findBlueBirdsMBRs();
+		yellowBirds = vision.getMBRVision().findYellowBirdsMBRs();
+		woodBlocks = vision.getMBRVision().findWoodMBR();
+		stoneBlocks = vision.getMBRVision().findStonesMBR();
+		iceBlocks = vision.getMBRVision().findIceMBR();
+		whiteBirds = vision.getMBRVision().findWhiteBirdsMBRs();
+		blackBirds = vision.getMBRVision().findBlackBirdsMBRs();
+		TNTs = vision.getMBRVision().findTNTsMBR();
 		trajPoints = vision.findTrajPoints();
 
 		Rectangle sling = vision.findSlingshotMBR();
@@ -201,8 +201,8 @@ public class ShowSeg implements Runnable {
 				}
 				
 				// Analyze and show image
-				//screenshot = drawMBRs(screenshot);
-				screenshot = drawRealshape(screenshot);
+				screenshot = drawMBRs(screenshot);
+				//screenshot = drawRealshape(screenshot);
 				if (frame == null) {
 					frame = new ImageSegFrame("Vision", screenshot,
 							null);

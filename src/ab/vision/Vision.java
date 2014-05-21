@@ -14,8 +14,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import ab.demo.other.ActionRobot;
-
 public class Vision {
 	private BufferedImage image;
 	private VisionMBR visionMBR = null;
@@ -45,6 +43,15 @@ public class Vision {
 			visionMBR = new VisionMBR(image);
 		}
 		return visionMBR.findBlocks();
+	}
+	
+	public List<ABObject> findTNT()
+	{
+		if(visionMBR == null)
+		{
+			visionMBR = new VisionMBR(image);
+		}
+		return visionMBR.findTNTs();
 	}
 	public List<ABObject> findPigsMBR()
 	{
