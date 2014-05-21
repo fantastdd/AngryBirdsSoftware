@@ -21,7 +21,7 @@ public class LineSegment {
     
     private static double THRESHOLD1 = Math.toRadians(20);
     private static double JOIN_THRESHOLD = Math.toRadians(5);
-    private static double JOIN_THRESHOLD2 = 40;
+    private static double JOIN_THRESHOLD2 = 40;//40;
     
     // angle tracking parameters
     private double prevAngle;
@@ -86,8 +86,9 @@ public class LineSegment {
     /* draw start point of the line onto canvas */
     public void draw(Graphics2D g, int left, int top)
     {        
-        g.setColor(Color.RED);
-        g.fillOval(_start.x+left-2, _start.y+top-2, 4, 4);
+        g.setColor(Color.CYAN);
+        g.fillOval(_start.x + left - 2, _start.y + top - 2, 4, 4);
+        //g.fillOval(_end.x + left - 1, _end.y + top - 1, 2, 2);
     }
     
     public double approximateAngle()
@@ -130,7 +131,7 @@ public class LineSegment {
     {
         double diff = a - b;
         
-        if (diff < -Math.PI / 2)
+        if (diff < - Math.PI / 2)
             diff += Math.PI;
         else if (diff > Math.PI / 2)
             diff -= Math.PI;

@@ -103,7 +103,7 @@ public class VisionRealShape
             return null;
             
         _draw.add(sling);
-        _drawShape.add(sling.getShape());
+        _drawShape.add(sling.getBody());
         
         // find bounding box of the slingshot and reference point
         int bound[] = sling.boundingBox();
@@ -139,7 +139,7 @@ public class VisionRealShape
                 // add if not overlapping with previous bird
                 if ((bound[0] + bound[2]) / 2 > xMax + 1)
                 {
-                    Circle b = (Circle) c.getShape();
+                    Circle b = (Circle) c.getBody();
                     _birds.add(b);
                     _draw.add(c);
                     _drawShape.add(b);
@@ -164,7 +164,7 @@ public class VisionRealShape
             if ((c.getType() >= ImageSegmenter.PIG && c.getType() <= ImageSegmenter.DUCK) || 
                 c.getType() == ImageSegmenter.HILLS)
             {
-                Body b = c.getShape();
+                Body b = c.getBody();
                 if (b == null || (c.getType() != ImageSegmenter.HILLS && b.centerX < xMin))
                     continue;
                     
@@ -228,7 +228,7 @@ public class VisionRealShape
                 pts.add(np);
                 prev = np;
                 _draw.add(c);
-				_drawShape.add(c.getShape());
+				_drawShape.add(c.getBody());
 				
 				// break if the tap point is found (special ability is used)
 				if (c.getArea() > TAP_SIZE)

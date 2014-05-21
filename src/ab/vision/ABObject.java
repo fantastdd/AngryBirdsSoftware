@@ -26,6 +26,10 @@ public class ABObject extends Rectangle {
 //For all MBRs, the angle is 0 by default.
  public double angle = 0;
  
+//is Hollow or not
+ public boolean hollow = false;
+ 
+ 
 public ABObject(Rectangle mbr, ABType type) {
 	super(mbr);
 	this.type = type;

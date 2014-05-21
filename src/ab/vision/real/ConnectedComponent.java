@@ -11,9 +11,12 @@
 package ab.vision.real;
 
 import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import ab.vision.ABType;
@@ -212,7 +215,7 @@ public class ConnectedComponent {
         {
             // approximate local angle by looking ahead
             Point p = path[i];
-            Point ahead = path[i+SMOOTH];
+            Point ahead = path[i + SMOOTH];
             
             int yDiff = ahead.y - p.y;
             int xDiff = ahead.x - p.x;
@@ -257,7 +260,7 @@ public class ConnectedComponent {
      *          (points where contour orientation changes)
      * @return  Most likely shape of the object, null if it is noise
      */
-    private Body findShape(ArrayList<Point> corners)
+    private Body findShape(List<Point> corners)
     {
         final int RESOLUTION = 50;
         final double res = Math.PI / 2 / RESOLUTION;
@@ -304,14 +307,14 @@ public class ConnectedComponent {
                 areaMax = a;
         }
         
-        final double JOIN_THRESHOLD = 1.4;
+        final double JOIN_THRESHOLD = 1.2;//1.4;
         final int SMALL_SIZE = 14;
         
         // relax circle threshold for objects with larger size
         // and objects which are lying at angles close to 45 degrees
         double tc;
-        if (Math.max(width, height) > SMALL_SIZE || Math.abs(angle-Math.PI/4) < Math.PI/8)
-            tc = 1.3;
+        if (Math.max(width, height) > SMALL_SIZE || Math.abs(angle - Math.PI/4) < Math.PI/8)
+            tc = 1.2; //1.3
         else
             tc = 1.1;
             
@@ -321,25 +324,66 @@ public class ConnectedComponent {
         // test for noise
         if (width <= 3 || height <= 3)
             return null;
-            
+        
+
+    	Poly poly = new Poly(findLines(), _left, _top, assignType(_type), _left + _width/2, _top + _height/2);
+    	int polyArea = getArea(poly.polygon);
+        int actualArea = Math.max((_area + _perimeter), polyArea);
+
         // test for joined component
-        if (areaMin > (_area + _perimeter) * JOIN_THRESHOLD)
-            return new Poly(findLines(), _left, _top, assignType(_type), _left+_width/2, _top+_height/2);
-            
+        
+        //if (areaMin > (_area + _perimeter) * JOIN_THRESHOLD)
+        if (areaMin > actualArea * JOIN_THRESHOLD)
+        {  
+        
+        	if ( (_area + _perimeter) > 400 )
+        	{
+            	return poly;
+        	} 
+        	else
+        	{
+        		 if (polyArea > (_area ) * 1.1)
+        	        	poly.hollow = true;
+        		 return poly;
+     
+        	}
+        	
+        }
         // test for circle
         if (areaMin * tc > areaMax && Math.abs(_width - _height) <= 3)
         {
             int r = (_width + _height) / 4 - 2;
             return new Circle(x, y, r, assignType(_type));
         }
-        
-        return new Rect(x, y, width, height, angle, assignType(_type));
+        Rect rect = new Rect(x, y, width, height, angle, assignType(_type));
+        double HOLLOW_THRESHOLD = 1.2; 
+        if (areaMin > (_area + _perimeter) * HOLLOW_THRESHOLD)
+        {
+        	rect.hollow = true;
+        }
+        return rect;
     }
+
+
+    public int getArea(Polygon poly)
+    {
+    	int area = 0;
+    	Rectangle rect = poly.getBounds();
+    	for (int x = rect.x; x < rect.x + rect.width; x++)
+    		for (int y = rect.y; y < rect.y + rect.height; y++)
+    		{
+    			if (poly.contains(x, y))
+    				area ++;
+    		}
+    	return area;
+    	
+    }
+    //public boolean testHollow(Shape shape){}
     
     /* find the most likely shape of the component
      * @return  most likely shape, null if it is noise
      */
-    public Body getShape()
+    public Body getBody()
     {
         if (_type == ImageSegmenter.SLING)
             return new Rect(boundingBox(), assignType(_type));
@@ -362,16 +406,61 @@ public class ConnectedComponent {
         {   
             // otherwise find corners first by border tracking
             findLines();
+         
             for (LineSegment line : _lines)
             {
-                corners.add(line._start);
-                corners.add(line._end);
+            	
+//            	if(!corners.contains(line._start))
+            		corners.add(line._start);
+            	//if(!corners.contains(line._end))
+            		corners.add(line._end);
             }
             for (Point p : _extrema)
-            if (!corners.contains(p))
-                corners.add(p);
+            	if (!corners.contains(p))
+            		corners.add(p);
+            
+            //remove very close points
+     /*       List<Point> noise = new LinkedList<Point>();
+            for (int i = 0; i < corners.size() - 1; i++)
+            {
+            	Point pt1 = corners.get(i);
+                if (noise.contains(pt1))
+                	continue;
+            	for (int j = i + 1; j < corners.size(); j++)
+            	{
+            		Point pt2 = corners.get(j);
+            		if(noise.contains(pt2))
+            			continue;
+            		if (distance(pt1, pt2) < 3)
+            		{	
+            			noise.add(pt2);
+            		}
+            	}
+            }*/
+            
+         /*   System.out.println("Print Noise");
+            for (Point p : noise)
+            	System.out.println(p.x + _left + "  " + (p.y + _top));
+            System.out.println("Print Corners");
+            for (Point p : corners)
+            	System.out.println(p.x + _left + "  " + (p.y + _top));
+            
+            corners.removeAll(noise);
+            
+            System.out.println("Print After Removal");
+            for (Point p : corners)
+            	System.out.println(p.x + _left + "  " + (p.y + _top));    */
         }
         return findShape(corners);
+    }
+    
+    private double distance(Point p1, Point p2)
+    {
+    	
+    	return Math.sqrt( 
+    			(p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y) 
+    			
+    			);
     }
     
     // return number of internal points in the component
@@ -404,7 +493,7 @@ public class ConnectedComponent {
         {
             if (_image[y][x] == FILLED)
             {
-                canvas.setRGB(x+_left, y+_top, ImageSegmenter._drawColor[_type]);
+                canvas.setRGB(x + _left, y + _top, ImageSegmenter._drawColor[_type]);
             }
             else if (drawEdge && _image[y][x] == EDGE)
             {
@@ -493,6 +582,11 @@ public class ConnectedComponent {
     		case ImageSegmenter.WOOD: type = ABType.Wood; break;
     		case ImageSegmenter.ICE: type = ABType.Ice; break;
     		case ImageSegmenter.HILLS: type = ABType.Hill; break;
+    		case ImageSegmenter.RED_BIRD: type = ABType.RedBird; break;
+    		case ImageSegmenter.YELLOW_BIRD: type = ABType.YellowBird; break;
+    		case ImageSegmenter.BLUE_BIRD: type = ABType.BlueBird; break;
+    		case ImageSegmenter.BLACK_BIRD: type = ABType.BlackBird; break;
+    		case ImageSegmenter.WHITE_BIRD: type = ABType.WhiteBird; break;
     		default: type = ABType.Unknown;
     	}
     	return type;

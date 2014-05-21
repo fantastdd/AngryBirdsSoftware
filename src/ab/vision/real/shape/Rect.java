@@ -69,6 +69,7 @@ public class Rect extends Body
     } 
 
 
+
     private void createPolygon()
     {
     	 
@@ -180,6 +181,6 @@ public class Rect extends Body
 	
 	public String toString()
 	{
-		return String.format("Rect: id:%d type:%s Area:%d w:%7.3f h:%7.3f a:%3.3f at x:%3.1f y:%3.1f", id, type, area, pwidth, plength, angle, centerX, centerY);
+		return String.format("Rect: id:%d type:%s hollow:%b Area:%d w:%7.3f h:%7.3f a:%3.3f at x:%3.1f y:%3.1f", id, type, hollow, area, pwidth, plength, angle, centerX, centerY);
 	}
 }

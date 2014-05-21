@@ -9,5 +9,5 @@ package ab.vision;
  *or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
  *****************************************************************************/
 public enum ABShape {
-	Rect,Poly,Circle
+	Rect,Poly,Circle,Triangle
 }
