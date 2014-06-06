@@ -147,7 +147,7 @@ public class NaiveAgent implements Runnable {
 
 			if (!pigs.isEmpty()) {
 
-				Point releasePoint;
+				Point releasePoint = null;
 				Shot shot = new Shot();
 				int dx,dy;
 				{
@@ -169,11 +169,14 @@ public class NaiveAgent implements Runnable {
 					ArrayList<Point> pts = tp.estimateLaunchPoint(sling, _tpt);
 					
 					// do a high shot when entering a level to find an accurate velocity
-					if (firstShot && pts.size() > 1) {
+					if (firstShot && pts.size() > 1) 
+					{
 						releasePoint = pts.get(1);
-					} else if (pts.size() == 1)
+					}
+					else if (pts.size() == 1)
 						releasePoint = pts.get(0);
-					else {
+					else if (pts.size() == 2)
+					{
 						// randomly choose between the trajectories, with a 1 in
 						// 6 chance of choosing the high one
 						if (randomGenerator.nextInt(6) == 0)
@@ -181,17 +184,23 @@ public class NaiveAgent implements Runnable {
 						else
 							releasePoint = pts.get(0);
 					}
+					else
+						if(pts.isEmpty())
+						{
+							System.out.println("No release point found for the target");
+							System.out.println("Try a shot with 45 degree");
+							releasePoint = tp.findReleasePoint(sling, Math.PI/4);
+						}
 					
 					// Get the reference point
 					Point refPoint = tp.getReferencePoint(sling);
 
-					System.out.println("Release Point: " + releasePoint);
 
 					//Calculate the tapping time according the bird type 
 					if (releasePoint != null) {
 						double releaseAngle = tp.getReleaseAngle(sling,
 								releasePoint);
-
+						System.out.println("Release Point: " + releasePoint);
 						System.out.println("Release Angle: "
 								+ Math.toDegrees(releaseAngle));
 						int tapInterval = 0;

@@ -120,12 +120,12 @@ public void setT_tap(int t_tap) {
 public String toString()
 {
 	String result = "";
-	if(x==0 && y==0)
+	if(x == 0 && y == 0)
 	{	
 	 if(t_tap!=0)	
 		result+= "tap at:  "  + t_tap;
 	}
-		else
+	else
 		result += "Shoot from: ("+ (x + dx)+ "  " + (y + dy) +" )" + " at time  " + t_shot ;	
 	
    return  result;

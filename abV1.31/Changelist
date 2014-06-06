@@ -2,10 +2,15 @@ Here is a list of the major changes, for details, please see ABDoc.pdf under the
 
 ================ Changes Since abV1.31 ====================================
 1. The RealShape segmentation can now distinguish between hollow and solid objects (see ABDoc.pdf section Object Representation)
+
 2. Better triangle recognition: Triangles are treated as Polygon.java while the previous version often mis-detects the triangles as circle. 
+
 3. Add findHills() in Vision.java (in the previous version, the hill is returned by the method findBlocksRealShape())5. 
+
 4. Add findTNTs() in Vision.java (in the previous version, you need to call VisionMBR.findTNTs() to get all the TNTs) 
+
 5. In Rect.java, the attributes PreciseWidth and PreciseHeight are changed to plength and pwidth, respectively. The corresponding methods are also changed accordingly.
+
 6. The method estimateLaunchPoint (see /src/ab/planner/TrajectoryPlanner.java) now returns empty list of release points when no plausible trajectories found for that target, and in this case, the sample agent will make a 45 degree shot.
 7. The isReachable method (see /src/ab/utils/ABUtil) now returns true (reachable) when a trajectory can reach the target without obstruction. Previously, the method only checks the obstruction by assuming the input trajectory always passes the target.  
 
