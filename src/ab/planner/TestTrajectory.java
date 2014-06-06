@@ -17,14 +17,13 @@ public class TestTrajectory {
 		TrajectoryPlanner tp = new TrajectoryPlanner();
 		Rectangle sling = vision.findSlingshotMBR();
 		//List<Point> pts = (tp.estimateLaunchPoint(vision.findSlingshotMBR(), new Point(400,10)));
-		//Point target = vision.findPigsMBR().get(0).getCenter();
-		Point target = new Point(400, 10);
+		Point target = vision.findPigsMBR().get(0).getCenter();
+		//Point target = new Point(400, 10);
 		List<Point> pts = (tp.estimateLaunchPoint(vision.findSlingshotMBR(), target));
 		Point releasePoint = null;
 		if(!pts.isEmpty())
 		{
 			releasePoint = pts.get(0);
-	
 		}
 		else
 		{
