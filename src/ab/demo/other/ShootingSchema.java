@@ -84,9 +84,11 @@ public void shoot(final Proxy proxy,List<Shot> csc)
 					   System.out.println(" waiting time:" + (time - _time));*/
 					   proxy.send(new ProxyDragMessage(_shot.getX(),_shot.getY(),_shot.getDx(),_shot.getDy()));
 				   }
-				   else {
+				   else 
+				   {
 					   proxy.send(new ProxyDragMessage(shot.getX(),shot.getY(),shot.getDx(),shot.getDy()));
-				}
+					   //System.out.println(shot.getX() + "  " + shot.getY() + "  " + shot.getDx() + " " + shot.getDy());
+				   }
 				   
 			   }
 			   else

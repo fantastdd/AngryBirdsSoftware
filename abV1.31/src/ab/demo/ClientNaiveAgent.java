@@ -233,7 +233,7 @@ public class ClientNaiveAgent implements Runnable {
 			
 			//If there are pigs, we pick up a pig randomly and shoot it. 
 			if (!pigs.isEmpty()) {		
-				Point releasePoint = null;
+				Point releasePoint;
 				// random pick up a pig
 					ABObject pig = pigs.get(randomGenerator.nextInt(pigs.size()));
 					
@@ -257,28 +257,27 @@ public class ClientNaiveAgent implements Runnable {
 					// do a high shot when entering a level to find an accurate velocity
 					if (firstShot && pts.size() > 1) {
 						releasePoint = pts.get(1);
-					} else 
-						if (pts.size() == 1)
+					} else if (pts.size() == 1)
+						releasePoint = pts.get(0);
+					else {
+						// System.out.println("first shot " + firstShot);
+						// randomly choose between the trajectories, with a 1 in
+						// 6 chance of choosing the high one
+						if (randomGenerator.nextInt(6) == 0)
+							releasePoint = pts.get(1);
+						else
 							releasePoint = pts.get(0);
-						else 
-							if(pts.size() == 2)
-							{
-								// System.out.println("first shot " + firstShot);
-								// randomly choose between the trajectories, with a 1 in
-								// 6 chance of choosing the high one
-								if (randomGenerator.nextInt(6) == 0)
-									releasePoint = pts.get(1);
-								else
-								releasePoint = pts.get(0);
-							}
-							Point refPoint = tp.getReferencePoint(sling);
+					}
+					Point refPoint = tp.getReferencePoint(sling);
+
+					System.out.println("Release Point: " + releasePoint);
 
 					// Get the release point from the trajectory prediction module
 					int tapTime = 0;
 					if (releasePoint != null) {
 						double releaseAngle = tp.getReleaseAngle(sling,
 								releasePoint);
-						System.out.println("Release Point: " + releasePoint);
+
 						System.out.println("Release Angle: "
 								+ Math.toDegrees(releaseAngle));
 						int tapInterval = 0;
