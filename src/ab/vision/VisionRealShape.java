@@ -85,14 +85,15 @@ public class VisionRealShape
     {
         if (_sling != null) return _sling;
         
-        // use the highest sling typed component
+        // use the highest sling typed component: e.g. frame
         int minY = 999999;
         ConnectedComponent sling = null;
         for (ConnectedComponent c : _components)
         {
             int top = c.boundingBox()[1];
+            int left = c.boundingBox()[0];
             if (c.getType() == ImageSegmenter.SLING 
-                && top < minY)
+                && top < minY && left < 300)
             {
                 minY = top;
                 sling = c;
@@ -346,8 +347,10 @@ public class VisionRealShape
 		BufferedImage screenshot = ActionRobot.doScreenShot();
 		Vision vision = new Vision(screenshot);
 		//List<ABObject> objs = vision.findBlocksRealShape();
-		List<ABObject> objs = vision.findHills();
-		for (ABObject obj : objs)
-			System.out.println(obj);
+		//List<ABObject> objs = vision.findHills();
+		Rectangle obj = vision.findSlingshotMBR();
+		System.out.println(obj);
+//		for (ABObject obj : objs)
+//			System.out.println(obj);
 	}
 }

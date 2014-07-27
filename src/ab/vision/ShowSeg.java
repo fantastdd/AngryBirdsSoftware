@@ -95,7 +95,9 @@ public class ShowSeg implements Runnable {
 		vision.findPigs();
 		vision.findHills();
 		vision.findBirds();
+		
 		vision.findSling();
+	
 		vision.findTrajectory();
 		vision.drawObjects(screenshot, true);
 		
@@ -201,11 +203,12 @@ public class ShowSeg implements Runnable {
 				}
 				
 				// Analyze and show image
-				screenshot = drawMBRs(screenshot);
-				//screenshot = drawRealshape(screenshot);
+				//screenshot = drawMBRs(screenshot);
+				screenshot = drawRealshape(screenshot);
 				if (frame == null) {
 					frame = new ImageSegFrame("Vision", screenshot,
 							null);
+				
 				} else {
 					frame.refresh(screenshot, null);
 				}
