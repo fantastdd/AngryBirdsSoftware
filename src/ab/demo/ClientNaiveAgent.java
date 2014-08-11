@@ -73,13 +73,13 @@ public class ClientNaiveAgent implements Runnable {
 	{
 		int level = 0;
 		boolean unsolved = false;
-		//all the levels have been solved, then get the first unsolved level
+		//all the level have been solved, then get the first unsolved level
 		for (int i = 0; i < solved.length; i++)
 		{
 			if(solved[i] == 0 )
 			{
 					unsolved = true;
-					level = (byte)(i + 1);
+					level = i + 1;
 					if(level <= currentLevel && currentLevel < solved.length)
 						continue;
 					else
@@ -88,27 +88,35 @@ public class ClientNaiveAgent implements Runnable {
 		}
 		if(unsolved)
 			return level;
-	    level = (byte)((this.currentLevel + 1)%solved.length);
+	    level = (currentLevel + 1)%solved.length;
 		if(level == 0)
 			level = solved.length;
 		return level; 
 	}
-
     /* 
      * Run the Client (Naive Agent)
      */
+	private void checkMyScore()
+	{
+		System.out.println(" My score: ");
+		int[] scores = ar.checkMyScore();
+		int level = 1;
+		for(int i: scores)
+		{
+			System.out.println(" level " + level + "  " + i);
+			if (i > 0)
+				solved[level - 1] = 1;
+			level ++;
+		}
+	}
 	public void run() {	
 		byte[] info = ar.configure(ClientActionRobot.intToByteArray(id));
 		solved = new int[info[2]];
 		
 		//load the initial level (default 1)
 		//Check my score
-		int[] _scores = ar.checkMyScore();
-		int counter = 0;
-		for(int i: _scores)
-		{
-			System.out.println(" level " + ++counter + "  " + i);
-		}
+		checkMyScore();
+		
 		currentLevel = (byte)getNextLevel(); 
 		ar.loadLevel(currentLevel);
 		//ar.loadLevel((byte)9);
@@ -116,28 +124,18 @@ public class ClientNaiveAgent implements Runnable {
 		while (true) {
 			
 			state = solve();
-			
 			//If the level is solved , go to the next level
 			if (state == GameState.WON) {
 							
 				///System.out.println(" loading the level " + (currentLevel + 1) );
-				System.out.println(" My score: ");
-				int[] scores = ar.checkMyScore();
-				for (int i = 0; i < scores.length ; i ++)
-				{
-				   
-				    	  System.out.print( " level " + (i+1) + ": " + scores[i]);
-				    		if(scores[i] > 0)
-								solved[i] = 1;
-				    		
-				}
+				checkMyScore();
 				System.out.println();
 				currentLevel = (byte)getNextLevel(); 
 				ar.loadLevel(currentLevel);
 				//ar.loadLevel((byte)9);
 				//display the global best scores
-				scores = ar.checkScore();
-				System.out.println("The global best score: ");
+				int[] scores = ar.checkScore();
+				System.out.println("Global best score: ");
 				for (int i = 0; i < scores.length ; i ++)
 				{
 				
