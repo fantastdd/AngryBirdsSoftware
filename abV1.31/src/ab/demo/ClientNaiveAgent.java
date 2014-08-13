@@ -331,7 +331,7 @@ public class ClientNaiveAgent implements Runnable {
 									List<Point> traj = vision.findTrajPoints();
 									tp.adjustTrajectory(traj, sling, releasePoint);
 									firstShot = false;
-								}
+								}s
 							}
 						}
 						else
@@ -341,6 +341,8 @@ public class ClientNaiveAgent implements Runnable {
 						System.out.println("no sling detected, can not execute the shot, will re-segement the image");
 				
 			}
+			else
+				System.out.println("No pig detected");
 		}
 		return state;
 	}

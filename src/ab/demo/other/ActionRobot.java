@@ -40,7 +40,7 @@ public class ActionRobot {
 	public static Proxy proxy;
 	public String level_status = "UNKNOWN";
 	public int current_score = 0;
-	private LoadingLevelSchema lls;
+	private LoadLevelSchema lls;
 	private RestartLevelSchema rls;
 	static {
 		if (proxy == null) {
@@ -74,7 +74,7 @@ public class ActionRobot {
 	// A java util class for the standalone version. It provides common
 	// functions an agent would use. E.g. get the screenshot
 	public ActionRobot() {
-		lls = new LoadingLevelSchema(proxy);
+		lls = new LoadLevelSchema(proxy);
 		rls = new RestartLevelSchema(proxy);
 	}
 

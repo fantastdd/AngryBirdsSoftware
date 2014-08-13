@@ -98,8 +98,9 @@ public class ClientNaiveAgent implements Runnable {
      */
 	private void checkMyScore()
 	{
-		System.out.println(" My score: ");
+		
 		int[] scores = ar.checkMyScore();
+		System.out.println(" My score: ");
 		int level = 1;
 		for(int i: scores)
 		{
