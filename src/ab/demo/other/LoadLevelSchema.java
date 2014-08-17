@@ -14,6 +14,7 @@ import ab.server.proxy.message.ProxyClickMessage;
 import ab.server.proxy.message.ProxyMouseWheelMessage;
 import ab.utils.StateUtil;
 import ab.vision.GameStateExtractor.GameState;
+import ab.vision.Vision;
 
 /**
  * Schema for loading level 
@@ -184,16 +185,17 @@ private boolean loadLevel(GameState state,int i)
 	   }
 	   
 	   try {
-			Thread.sleep(2000);
+			Thread.sleep(2500);
 		} catch (InterruptedException e1) {
 			
 			e1.printStackTrace();
 		}
+	  
 	 
      }
      
    
-   //  System.out.println("current: " + current + "  i  " + i);
+
      return true;
 
 }

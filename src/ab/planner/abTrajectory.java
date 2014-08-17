@@ -16,11 +16,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import ab.planner.TrajectoryPlanner;
 import ab.server.Proxy;
 import ab.server.proxy.message.ProxyScreenshotMessage;
 import ab.utils.ImageSegFrame;
@@ -93,9 +93,20 @@ public class abTrajectory {
 
             // process image
             VisionMBR vision = new VisionMBR(screenshot);
-            List<Rectangle> pigs = vision.findPigsMBR();
+            //List<Rectangle> pigs = vision.findPigsMBR();
+            
             List<Rectangle> redBirds = vision.findRedBirdsMBRs();
-
+            List<Rectangle> yellowBirds = vision.findYellowBirdsMBRs();
+            List<Rectangle> blueBirds = vision.findBlueBirdsMBRs();
+            List<Rectangle> whiteBirds = vision.findWhiteBirdsMBRs();
+            List<Rectangle> blackBirds = vision.findBlackBirdsMBRs();
+            List<Rectangle> birds = new LinkedList<Rectangle>();
+            birds.addAll(redBirds);
+            birds.addAll(yellowBirds);
+            birds.addAll(blueBirds);
+            birds.addAll(blackBirds);
+            birds.addAll(whiteBirds);
+            
             Rectangle sling = vision.findSlingshotMBR();
             if (sling == null) {
                 System.out.println("...could not find the slingshot");
@@ -105,13 +116,13 @@ public class abTrajectory {
             System.out.println("...found slingshot at " + sling.toString());
 
             // convert screenshot to grey scale and draw bounding boxes
-            screenshot = VisionUtils.convert2grey(screenshot);
-            VisionUtils.drawBoundingBoxes(screenshot, pigs, Color.GREEN);
+            //screenshot = VisionUtils.convert2grey(screenshot);
+            //VisionUtils.drawBoundingBoxes(screenshot, pigs, Color.GREEN);
             VisionUtils.drawBoundingBoxes(screenshot, redBirds, Color.PINK);
             VisionUtils.drawBoundingBox(screenshot, sling, Color.ORANGE);
 
             // find active bird
-            Rectangle activeBird = trajectory.findActiveBird(redBirds);
+            Rectangle activeBird = trajectory.findActiveBird(birds);
             if (activeBird == null) {
                 System.out.println("...could not find active bird");
                 continue;
