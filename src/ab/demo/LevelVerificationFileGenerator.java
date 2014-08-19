@@ -54,7 +54,9 @@ public static void main(String args[]) throws IOException
     	sortByX(pigs);
     	Rectangle lmPig = pigs.get(0);
     	System.out.println(" The leftmost Pig: " + lmPig);
-    	fw.write(i + "," + lmPig.x + "," + lmPig.y + "\n");
+    	fw.write(i + "," + lmPig.x + "," + lmPig.y);
+    	if (i == 21)
+    		fw.write("\n");
     }
     	fw.close();
 		System.out.println("Finished");
