@@ -321,7 +321,9 @@ public class ClientNaiveAgent implements Runnable {
 							int dy = (int) releasePoint.getY() - refPoint.y;
 							if(dx < 0)
 							{
+								long timer = System.currentTimeMillis();
 								ar.shoot(refPoint.x, refPoint.y, dx, dy, 0, tapTime, false);
+								System.out.println("It takes " + (System.currentTimeMillis() - timer) + " ms to take a shot");
 								state = ar.checkState();
 								if ( state == GameState.PLAYING )
 								{

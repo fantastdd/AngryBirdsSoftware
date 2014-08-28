@@ -331,7 +331,7 @@ public class ClientNaiveAgent implements Runnable {
 									List<Point> traj = vision.findTrajPoints();
 									tp.adjustTrajectory(traj, sling, releasePoint);
 									firstShot = false;
-								}s
+								}
 							}
 						}
 						else
