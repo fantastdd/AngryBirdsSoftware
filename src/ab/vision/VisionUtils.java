@@ -3,9 +3,8 @@
  ** Copyright (c) 2014,XiaoYu (Gary) Ge, Stephen Gould,Jochen Renz
  **  Sahan Abeyasinghe, Jim Keys,   Andrew Wang, Peng Zhang
  ** All rights reserved.
- **This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
- **To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ 
- *or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+**This work is licensed under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+**To view a copy of this license, visit http://www.gnu.org/licenses/
  *****************************************************************************/
 
 package ab.vision;
@@ -561,15 +560,15 @@ public class VisionUtils {
 		// process image
 		VisionMBR vision = new VisionMBR(screenshot);
 		List<Rectangle> pigs = vision.findPigsMBR();
-		List<Rectangle> redBirds = vision.findRedBirds();
-		List<Rectangle> blueBirds = vision.findBlueBirds();
-		List<Rectangle> yellowBirds = vision.findYellowBirds();
-		List<Rectangle> woodBlocks = vision.findWood();
-		List<Rectangle> stoneBlocks = vision.findStones();
-		List<Rectangle> iceBlocks = vision.findIce();
-		List<Rectangle> whiteBirds = vision.findWhiteBirds();
-		List<Rectangle> blackBirds = vision.findBlackBirds();
-		List<Rectangle> TNTs = vision.findTNTs();
+		List<Rectangle> redBirds = vision.findRedBirdsMBRs();
+		List<Rectangle> blueBirds = vision.findBlueBirdsMBRs();
+		List<Rectangle> yellowBirds = vision.findYellowBirdsMBRs();
+		List<Rectangle> woodBlocks = vision.findWoodMBR();
+		List<Rectangle> stoneBlocks = vision.findStonesMBR();
+		List<Rectangle> iceBlocks = vision.findIceMBR();
+		List<Rectangle> whiteBirds = vision.findWhiteBirdsMBRs();
+		List<Rectangle> blackBirds = vision.findBlackBirdsMBRs();
+		List<Rectangle> TNTs = vision.findTNTsMBR();
 		List<Point> trajPoints = vision.findTrajPoints();
 
 		Rectangle sling = vision.findSlingshotMBR();

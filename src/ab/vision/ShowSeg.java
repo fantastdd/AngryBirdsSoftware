@@ -3,9 +3,8 @@
 ** Copyright (c) 2014,XiaoYu (Gary) Ge, Stephen Gould,Jochen Renz
 **  Sahan Abeyasinghe, Jim Keys,   Andrew Wang, Peng Zhang
 ** All rights reserved.
-**This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
-**To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ 
-*or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+**This work is licensed under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+**To view a copy of this license, visit http://www.gnu.org/licenses/
 *****************************************************************************/
 
 package ab.vision;
@@ -92,10 +91,12 @@ public class ShowSeg implements Runnable {
 	    vision = new VisionRealShape(screenshot);
 		
 	    vision.findObjects();
-		
-	  
+		vision.findPigs();
+		vision.findHills();
 		vision.findBirds();
+		
 		vision.findSling();
+	
 		vision.findTrajectory();
 		vision.drawObjects(screenshot, true);
 		
@@ -118,15 +119,15 @@ public class ShowSeg implements Runnable {
 		// process image
 		Vision vision = new Vision(screenshot);
 		pigs = vision.getMBRVision().findPigsMBR();
-		redBirds = vision.getMBRVision().findRedBirds();
-		blueBirds = vision.getMBRVision().findBlueBirds();
-		yellowBirds = vision.getMBRVision().findYellowBirds();
-		woodBlocks = vision.getMBRVision().findWood();
-		stoneBlocks = vision.getMBRVision().findStones();
-		iceBlocks = vision.getMBRVision().findIce();
-		whiteBirds = vision.getMBRVision().findWhiteBirds();
-		blackBirds = vision.getMBRVision().findBlackBirds();
-		TNTs = vision.getMBRVision().findTNTs();
+		redBirds = vision.getMBRVision().findRedBirdsMBRs();
+		blueBirds = vision.getMBRVision().findBlueBirdsMBRs();
+		yellowBirds = vision.getMBRVision().findYellowBirdsMBRs();
+		woodBlocks = vision.getMBRVision().findWoodMBR();
+		stoneBlocks = vision.getMBRVision().findStonesMBR();
+		iceBlocks = vision.getMBRVision().findIceMBR();
+		whiteBirds = vision.getMBRVision().findWhiteBirdsMBRs();
+		blackBirds = vision.getMBRVision().findBlackBirdsMBRs();
+		TNTs = vision.getMBRVision().findTNTsMBR();
 		trajPoints = vision.findTrajPoints();
 
 		Rectangle sling = vision.findSlingshotMBR();
@@ -206,6 +207,7 @@ public class ShowSeg implements Runnable {
 				if (frame == null) {
 					frame = new ImageSegFrame("Vision", screenshot,
 							null);
+				
 				} else {
 					frame.refresh(screenshot, null);
 				}

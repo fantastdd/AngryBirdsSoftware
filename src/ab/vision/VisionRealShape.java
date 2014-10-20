@@ -3,9 +3,8 @@
  ** Copyright (c) 2014, XiaoYu (Gary) Ge, Stephen Gould, Jochen Renz
  **  Sahan Abeyasinghe,Jim Keys,  Andrew Wang, Peng Zhang
  ** All rights reserved.
- **This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
- **To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ 
- *or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+**This work is licensed under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+**To view a copy of this license, visit http://www.gnu.org/licenses/
  *****************************************************************************/
  
 package ab.vision;
@@ -25,7 +24,6 @@ import ab.vision.real.ConnectedComponent;
 import ab.vision.real.ImageSegmenter;
 import ab.vision.real.shape.Body;
 import ab.vision.real.shape.Circle;
-import ab.vision.real.shape.Rect;
 
 public class VisionRealShape 
 {
@@ -42,7 +40,7 @@ public class VisionRealShape
     // detected game objects
     private Rectangle _sling = null;
     private List<ABObject> _birds = null;
-    private ArrayList<ABObject> _gameObjects = null;
+
     
     // connected component and shapes for drawing purposes
     private ArrayList<ConnectedComponent> _draw = null;
@@ -75,7 +73,7 @@ public class VisionRealShape
         // initialise drawing objects
         _draw = new ArrayList<ConnectedComponent>();
         _drawShape = new ArrayList<Body>();
-        _gameObjects = new ArrayList<ABObject>();
+     
         // find the slingshot and reference point
         findSling();
       
@@ -86,14 +84,15 @@ public class VisionRealShape
     {
         if (_sling != null) return _sling;
         
-        // use the highest sling typed component
+        // use the highest sling typed component: e.g. frame
         int minY = 999999;
         ConnectedComponent sling = null;
         for (ConnectedComponent c : _components)
         {
             int top = c.boundingBox()[1];
+            int left = c.boundingBox()[0];
             if (c.getType() == ImageSegmenter.SLING 
-                && top < minY)
+                && top < minY && left < 300)
             {
                 minY = top;
                 sling = c;
@@ -151,53 +150,71 @@ public class VisionRealShape
         return _birds;
     }
     
-    // find all objects in the scene beside slingshot and birds
+    public List<ABObject> findPigs()
+    {
+    	  int xMin = 0;
+          if (_sling != null)
+              xMin = _sling.x + 100;
+          List<ABObject> pigs = new LinkedList<ABObject>();
+          for (ConnectedComponent c : _components)
+          {
+              if (c.getType() == ImageSegmenter.PIG)
+              {
+                  Body b = c.getBody();
+                  if (b == null || ( b.centerX < xMin))
+                      continue;
+                  pigs.add(b);
+                  _draw.add(c);
+                  _drawShape.add(b);
+              }
+              
+          }
+          return pigs;
+    }
+    public List<ABObject> findHills()
+    {
+    	  int xMin = 0;
+          if (_sling != null)
+              xMin = _sling.x + 100;
+          List<ABObject> hills = new LinkedList<ABObject>();
+          for (ConnectedComponent c : _components)
+          {
+              if (c.getType() == ImageSegmenter.HILLS)
+              {
+                  Body b = c.getBody();
+                  if (b == null || ( b.centerX < xMin))
+                      continue;
+                  hills.add(b);
+                  _draw.add(c);
+                  _drawShape.add(b);
+              }
+              
+          }
+          return hills;
+    }
+    // find all objects in the scene beside slingshot, birds, pigs. and hills.
     public List<ABObject> findObjects()
     {
         int xMin = 0;
         if (_sling != null)
             xMin = _sling.x + 100;
             
-      
+        List<ABObject> blocks = new LinkedList<ABObject>();
         for (ConnectedComponent c : _components)
         {
-            if ((c.getType() >= ImageSegmenter.PIG && c.getType() <= ImageSegmenter.DUCK) || 
-                c.getType() == ImageSegmenter.HILLS)
+            if ((c.getType() > ImageSegmenter.PIG && c.getType() <= ImageSegmenter.DUCK))
             {
                 Body b = c.getBody();
-                if (b == null || (c.getType() != ImageSegmenter.HILLS && b.centerX < xMin))
+                if (b == null || ( b.centerX < xMin))
                     continue;
-                    
-                //Added by Gary: avoid score noises after a pig is destroyed. Check whether a pig is a hollow circle
-               /* if(c.getType() == ImageSegmenter.PIG)
-                {
-                	int[][] image = _seg._image;
-                	for(int i = 0; i < 30; i++)
-                	//System.out.println(image[(int)b.getCenterX()+ i][(int)b.getCenterY() + i]);
-                	if(image[(int)b.getCenterX()][(int)b.getCenterY()] == 262143)
-                		continue;
-                }*/
-                Body _b = b;
-                if ( b instanceof Circle && b.type == ABType.Wood)
-    			{
-    			
-    				ABObject newBlock = new Rect(
-    						b.getCenterX(), b.getCenterY(), b.getBounds().width, 
-    						b.getBounds().height, 0, ABType.Unknown, b.area);
-    				/*System.out.println(" circle to rec conversion: Circle " + b);
-    				System.out.println(" circle to rec conversion: Rect " + newBlock);*/
-    				newBlock.type = b.type;
-    				newBlock.id = b.id;
-    				_b = (Rect)newBlock;
-    			}
-                _gameObjects.add(_b);
+                blocks.add(b);
                 _draw.add(c);
                 _drawShape.add(b);
                
             }
             
         }
-        return _gameObjects;
+        return blocks;
     }
     
     // find the trajectory points
@@ -322,27 +339,17 @@ public class VisionRealShape
         return Math.sqrt(x*x + y*y);
     }
 
-	public List<ABObject> findPigs() {
-        
-		List<ABObject> pigs = new LinkedList<ABObject>();
-		if(_gameObjects.isEmpty())
-		{
-			findObjects();
-		}
-		for (ABObject body : _gameObjects)
-		{
-			if(body.type == ABType.Pig)
-				pigs.add(body);
-		}
-		return pigs;
-	}
+
 	public static void main(String args[])
 	{
 		new ActionRobot();
 		BufferedImage screenshot = ActionRobot.doScreenShot();
 		Vision vision = new Vision(screenshot);
-		List<ABObject> objs = vision.findBlocksRealShape();
-		for (ABObject obj : objs)
-			System.out.println(obj);
+		//List<ABObject> objs = vision.findBlocksRealShape();
+		//List<ABObject> objs = vision.findHills();
+		Rectangle obj = vision.findSlingshotMBR();
+		System.out.println(obj);
+//		for (ABObject obj : objs)
+//			System.out.println(obj);
 	}
 }

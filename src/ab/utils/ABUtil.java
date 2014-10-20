@@ -26,7 +26,7 @@ public class ABUtil {
 		int ey_o2 = o2.y + o2.height;
 		if(
 			(Math.abs(ey_o2 - o1.y) < gap)
-			&& 
+			&&  
  			!( o2.x - ex_o1  > gap || o1.x - ex_o2 > gap )
 		  )
 	        return true;	
@@ -50,10 +50,17 @@ public class ABUtil {
 
 	//Return true if the target can be hit by releasing the bird at the specified release point
 	public static boolean isReachable(Vision vision, Point target, Shot shot)
-	{
-		boolean result = true;
+	{ 
+		//test whether the trajectory can pass the target without considering obstructions
 		Point releasePoint = new Point(shot.getX() + shot.getDx(), shot.getY() + shot.getDy()); 
-		List<Point> points = tp.predictTrajectory(vision.findSlingshotMBR(), releasePoint);
+		int traY = tp.getYCoordinate(vision.findSlingshotMBR(), releasePoint, target.x);
+		if (Math.abs(traY - target.y) > 100)
+		{	
+			//System.out.println(Math.abs(traY - target.y));
+			return false;
+		}
+		boolean result = true;
+		List<Point> points = tp.predictTrajectory(vision.findSlingshotMBR(), releasePoint);		
 		for(Point point: points)
 		{
 		  if(point.x < 840 && point.y < 480 && point.y > 100 && point.x > 400)

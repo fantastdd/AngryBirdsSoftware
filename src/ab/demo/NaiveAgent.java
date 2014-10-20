@@ -3,9 +3,8 @@
  ** Copyright (c) 2014, XiaoYu (Gary) Ge, Stephen Gould, Jochen Renz
  **  Sahan Abeyasinghe,Jim Keys,  Andrew Wang, Peng Zhang
  ** All rights reserved.
- **This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
- **To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ 
- *or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+**This work is licensed under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+**To view a copy of this license, visit http://www.gnu.org/licenses/
  *****************************************************************************/
 package ab.demo;
 
@@ -147,7 +146,7 @@ public class NaiveAgent implements Runnable {
 
 			if (!pigs.isEmpty()) {
 
-				Point releasePoint;
+				Point releasePoint = null;
 				Shot shot = new Shot();
 				int dx,dy;
 				{
@@ -169,11 +168,14 @@ public class NaiveAgent implements Runnable {
 					ArrayList<Point> pts = tp.estimateLaunchPoint(sling, _tpt);
 					
 					// do a high shot when entering a level to find an accurate velocity
-					if (firstShot && pts.size() > 1) {
+					if (firstShot && pts.size() > 1) 
+					{
 						releasePoint = pts.get(1);
-					} else if (pts.size() == 1)
+					}
+					else if (pts.size() == 1)
 						releasePoint = pts.get(0);
-					else {
+					else if (pts.size() == 2)
+					{
 						// randomly choose between the trajectories, with a 1 in
 						// 6 chance of choosing the high one
 						if (randomGenerator.nextInt(6) == 0)
@@ -181,17 +183,23 @@ public class NaiveAgent implements Runnable {
 						else
 							releasePoint = pts.get(0);
 					}
+					else
+						if(pts.isEmpty())
+						{
+							System.out.println("No release point found for the target");
+							System.out.println("Try a shot with 45 degree");
+							releasePoint = tp.findReleasePoint(sling, Math.PI/4);
+						}
 					
 					// Get the reference point
 					Point refPoint = tp.getReferencePoint(sling);
 
-					System.out.println("Release Point: " + releasePoint);
 
 					//Calculate the tapping time according the bird type 
 					if (releasePoint != null) {
 						double releaseAngle = tp.getReleaseAngle(sling,
 								releasePoint);
-
+						System.out.println("Release Point: " + releasePoint);
 						System.out.println("Release Angle: "
 								+ Math.toDegrees(releaseAngle));
 						int tapInterval = 0;

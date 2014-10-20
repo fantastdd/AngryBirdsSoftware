@@ -3,9 +3,8 @@
  ** Copyright (c) 2014, XiaoYu (Gary) Ge, Stephen Gould, Jochen Renz
  **  Sahan Abeyasinghe,Jim Keys,  Andrew Wang, Peng Zhang
  ** All rights reserved.
- **This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
- **To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ 
- *or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+**This work is licensed under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+**To view a copy of this license, visit http://www.gnu.org/licenses/
  *****************************************************************************/
  
 package ab.vision.real;
@@ -409,59 +408,19 @@ public class ConnectedComponent {
          
             for (LineSegment line : _lines)
             {
-            	
-//            	if(!corners.contains(line._start))
             		corners.add(line._start);
-            	//if(!corners.contains(line._end))
             		corners.add(line._end);
             }
             for (Point p : _extrema)
             	if (!corners.contains(p))
             		corners.add(p);
             
-            //remove very close points
-     /*       List<Point> noise = new LinkedList<Point>();
-            for (int i = 0; i < corners.size() - 1; i++)
-            {
-            	Point pt1 = corners.get(i);
-                if (noise.contains(pt1))
-                	continue;
-            	for (int j = i + 1; j < corners.size(); j++)
-            	{
-            		Point pt2 = corners.get(j);
-            		if(noise.contains(pt2))
-            			continue;
-            		if (distance(pt1, pt2) < 3)
-            		{	
-            			noise.add(pt2);
-            		}
-            	}
-            }*/
-            
-         /*   System.out.println("Print Noise");
-            for (Point p : noise)
-            	System.out.println(p.x + _left + "  " + (p.y + _top));
-            System.out.println("Print Corners");
-            for (Point p : corners)
-            	System.out.println(p.x + _left + "  " + (p.y + _top));
-            
-            corners.removeAll(noise);
-            
-            System.out.println("Print After Removal");
-            for (Point p : corners)
-            	System.out.println(p.x + _left + "  " + (p.y + _top));    */
+
         }
         return findShape(corners);
     }
     
-    private double distance(Point p1, Point p2)
-    {
-    	
-    	return Math.sqrt( 
-    			(p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y) 
-    			
-    			);
-    }
+
     
     // return number of internal points in the component
     public int getArea()
