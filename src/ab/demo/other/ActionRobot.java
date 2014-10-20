@@ -1,5 +1,5 @@
 /*****************************************************************************
-a ** ANGRYBIRDS AI AGENT FRAMEWORK
+ ** ANGRYBIRDS AI AGENT FRAMEWORK
  ** Copyright (c) 2014,XiaoYu (Gary) Ge, Stephen Gould,Jochen Renz
  **  Sahan Abeyasinghe, Jim Keys,   Andrew Wang, Peng Zhang
  ** All rights reserved.

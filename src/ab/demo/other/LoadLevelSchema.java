@@ -13,7 +13,6 @@ import ab.server.proxy.message.ProxyClickMessage;
 import ab.server.proxy.message.ProxyMouseWheelMessage;
 import ab.utils.StateUtil;
 import ab.vision.GameStateExtractor.GameState;
-import ab.vision.Vision;
 
 /**
  * Schema for loading level 
