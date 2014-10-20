@@ -1,13 +1,11 @@
 /*****************************************************************************
-** ANGRYBIRDS AI AGENT FRAMEWORK
-** Copyright (c) 2014, Sahan Abeyasinghe, XiaoYu (Gary) Ge, Stephen Gould,
-** Jim Keys, Kar-Wai Lim, Jochen Renz
-** All rights reserved.
-**
-** This software is distributed under terms of the BSD license. See the 
-** LICENSE file in the root directory for details.
-*****************************************************************************/
-
+ ** ANGRYBIRDS AI AGENT FRAMEWORK
+ ** Copyright (c) 2014,XiaoYu (Gary) Ge, Stephen Gould,Jochen Renz
+ **  Sahan Abeyasinghe, Jim Keys,   Andrew Wang, Peng Zhang
+ ** All rights reserved.
+**This work is licensed under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+**To view a copy of this license, visit http://www.gnu.org/licenses/
+ *****************************************************************************/
 (function() {
     var sock = null;
 
@@ -114,14 +112,15 @@
     }
 
     // generate a mouse wheel event
-    function mousewheel(data) {
-        var delta = data['delta'];
-        
-        var canvas = $('canvas');
-        var evt = document.createEvent('WheelEvent');
-        evt.initWebKitWheelEvent(0, delta, window, 0, 0, 0, 0, false, false, false, false);
-        canvas[0].dispatchEvent(evt);
-    }
+	function mousewheel(data) {
+		var delta = data['delta'];
+		var canvas = $('canvas');
+		//var evt = document.createEvent('WheelEvent');
+		var eventInit = { deltaX: 0, deltaY: -delta*120 }
+		var evt = new WheelEvent("mousewheel", eventInit);
+		//evt.initWebKitWheelEvent(0, delta, window, 0, 0, 0, 0, false, false, false, false);
+		canvas[0].dispatchEvent(evt);
+	}
     
     // capture a screenshot and send it to the client
     function screenshot(data) {
