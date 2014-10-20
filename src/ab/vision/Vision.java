@@ -3,9 +3,8 @@
  ** Copyright (c) 2014,XiaoYu (Gary) Ge, Stephen Gould, Jochen Renz
  **  Sahan Abeyasinghe, Jim Keys,   Andrew Wang, Peng Zhang
  ** All rights reserved.
- **This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
- **To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ 
- *or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+**This work is licensed under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+**To view a copy of this license, visit http://www.gnu.org/licenses/
  *****************************************************************************/
 package ab.vision;
 
@@ -13,8 +12,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.List;
-
-import ab.demo.other.ActionRobot;
 
 public class Vision {
 	private BufferedImage image;
@@ -36,7 +33,7 @@ public class Vision {
 			
 	}
 	/**
-	 * @return a list of MBRs of the blocks in the screenshot. Blocks: Stone, Wood, Ice, and TNT 
+	 * @return a list of MBRs of the blocks in the screenshot. Blocks: Stone, Wood, Ice
 	 * */
 	public List<ABObject> findBlocksMBR()
 	{
@@ -46,6 +43,15 @@ public class Vision {
 		}
 		return visionMBR.findBlocks();
 	}
+	
+	public List<ABObject> findTNTs()
+	{
+		if(visionMBR == null)
+		{
+			visionMBR = new VisionMBR(image);
+		}
+		return visionMBR.findTNTs();
+	}
 	public List<ABObject> findPigsMBR()
 	{
 		if (visionMBR == null)
@@ -54,7 +60,7 @@ public class Vision {
 		}
 		return visionMBR.findPigs();
 	}
-	public List<ABObject> findPigsRealshape()
+	public List<ABObject> findPigsRealShape()
 	{
 		if(visionRealShape == null)
 		{
@@ -63,7 +69,7 @@ public class Vision {
 		
 		return visionRealShape.findPigs();
 	} 
-	public List<ABObject> findBirdsRealshape()
+	public List<ABObject> findBirdsRealShape()
 	{
 		if(visionRealShape == null)
 		{
@@ -71,7 +77,18 @@ public class Vision {
 		}
 		
 		return visionRealShape.findBirds();
+	}
+	
+	public List<ABObject> findHills()
+	{
+		if(visionRealShape == null)
+		{
+			visionRealShape = new VisionRealShape(image);
+		}
+		
+		return visionRealShape.findHills();
 	} 
+	
 	
 	public Rectangle findSlingshotMBR()
 	{
@@ -90,7 +107,7 @@ public class Vision {
 		return visionMBR.findTrajPoints();
 	}
 	/**
-	 * @return a list of real shapes (represented by Body.java) of the blocks in the screenshot. Blocks: Stone, Wood, Ice, and TNT 
+	 * @return a list of real shapes (represented by Body.java) of the blocks in the screenshot. Blocks: Stone, Wood, Ice 
 	 * */
 	public List<ABObject> findBlocksRealShape()
 	{
@@ -99,8 +116,7 @@ public class Vision {
 			visionRealShape = new VisionRealShape(image);
 		}
 		List<ABObject> allBlocks = visionRealShape.findObjects();
-		allBlocks.removeAll(findPigsRealshape());
-	
+		
 		return allBlocks;
 	}
 	public VisionMBR getMBRVision()
@@ -109,10 +125,4 @@ public class Vision {
 			visionMBR = new VisionMBR(image);
 		return visionMBR;
 	}
-
-	
-	
-	
-
-
 }

@@ -3,9 +3,8 @@
 ** Copyright (c) 2014,  XiaoYu (Gary) Ge, Stephen Gould,Jochen Renz
 ** Sahan Abeyasinghe, Jim Keys,   Andrew Wang, Peng Zhang
 ** All rights reserved.
-**This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
-**To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/ 
-*or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+**This work is licensed under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+**To view a copy of this license, visit http://www.gnu.org/licenses/
 *****************************************************************************/
 package ab.planner;
 
@@ -165,7 +164,8 @@ public class TrajectoryPlanner {
         double t1 = actualToLaunch(Math.atan(tangent1));
         double t2 = actualToLaunch(Math.atan(tangent2));
 
-        
+        ArrayList<Point> pts = new ArrayList<Point>();
+
         // search angles in range [t1 - BOUND, t1 + BOUND]
         for (double theta = t1 - BOUND; theta <= t1 + BOUND; theta += 0.001)
         {
@@ -187,7 +187,12 @@ public class TrajectoryPlanner {
                 bestError = error;
             }
         }
-        
+        if (bestError < 1000)
+        {
+            theta1 = actualToLaunch(theta1);
+            // add launch points to the list
+            pts.add(findReleasePoint(slingshot, theta1));
+        }
         bestError = 1000;
         
         // search angles in range [t2 - BOUND, t2 + BOUND]
@@ -212,17 +217,13 @@ public class TrajectoryPlanner {
             }
         }
         
-        theta1 = actualToLaunch(theta1);
         theta2 = actualToLaunch(theta2);
         
         //System.out.println("Two angles: " + Math.toDegrees(theta1) + ", " + Math.toDegrees(theta2));
             
-        // add launch points to the list
-        ArrayList<Point> pts = new ArrayList<Point>();
-        pts.add(findReleasePoint(slingshot, theta1));
         
         // add the higher point if it is below 75 degrees and not same as first
-        if (theta2 < Math.toRadians(75) && theta2 != theta1)
+        if (theta2 < Math.toRadians(75) && theta2 != theta1 && bestError < 1000)
             pts.add(findReleasePoint(slingshot, theta2));
         
         return pts;
